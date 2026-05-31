@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Folio · 杂志风 PPT</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;500;600&family=Noto+Serif+SC:wght@400;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   MAGAZINE PPT — 原型模板
+   CSS Variables · Grid System · Layout Patterns · Navigation
+   ============================================================ */
+
+/* -------- 1. CSS Variables -------- */
+:root {
+  /* 颜色系统 — 默认「墨水经典」 */
+  --ink: #1a1814;
+  --ink-rgb: 26, 24, 20;
+  --paper: #f7f4ef;
+  --paper-rgb: 247, 244, 239;
+  --paper-tint: #efece5;
+  --ink-tint: rgba(26, 24, 20, 0.06);
+  --accent: #94352b;
+  --accent-rgb: 148, 53, 43;
+  --accent-dim: rgba(148, 53, 43, 0.15);
+  --grey: rgba(26, 24, 20, 0.5);
+
+  /* 字体系统 */
+  --font-display: 'Playfair Display', 'Noto Serif SC', Georgia, serif;
+  --font-body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-zh: 'Noto Serif SC', 'Source Han Serif SC', Georgia, serif;
+  --font-mono: 'JetBrains Mono', 'SF Mono', monospace;
+
+  /* 字号阶梯 — 杂志级对比 */
+  --text-hero: min(9.4vw, 16.9vh);
+  --text-display: min(5.6vw, 10.1vh);
+  --text-title: min(3.2vw, 5.8vh);
+  --text-lead: min(1.6vw, 2.9vh);
+  --text-body: clamp(14px, 1.2vw, 18px);
+  --text-caption: clamp(11px, 0.9vw, 13px);
+  --text-meta: clamp(10px, 0.75vw, 11px);
+
+  /* 行高 */
+  --lh-tight: 1.05;
+  --lh-display: 1.15;
+  --lh-lead: 1.4;
+  --lh-body: 1.7;
+
+  /* 间距系统 (8px base) */
+  --sp-1: 4px;
+  --sp-2: 8px;
+  --sp-3: 12px;
+  --sp-4: 16px;
+  --sp-5: 24px;
+  --sp-6: 32px;
+  --sp-7: 40px;
+  --sp-8: 48px;
+  --sp-9: 64px;
+  --sp-10: 80px;
+  --sp-11: 96px;
+  --sp-12: 128px;
+
+  /* 幻灯片尺寸 (16:9) */
+  --slide-w: 1280px;
+  --slide-h: 720px;
+
+  /* 安全区 */
+  --safe-x: 64px;
+  --safe-y: 56px;
+
+  /* 过渡/动效 */
+  --ease-out-expo: cubic-bezier(0.19, 1, 0.22, 1);
+  --dur-slow: 800ms;
+  --dur-fast: 400ms;
+}
+
+/* -------- 2. 主题色预设 -------- */
+.theme-indigo {
+  --ink: #0f1a2e;
+  --ink-rgb: 15, 26, 46;
+  --paper: #f0f2f5;
+  --paper-rgb: 240, 242, 245;
+  --accent: #2a5c8a;
+  --accent-rgb: 42, 92, 138;
+  --accent-dim: rgba(42, 92, 138, 0.12);
+}
+.theme-forest {
+  --ink: #1a2e1f;
+  --ink-rgb: 26, 46, 31;
+  --paper: #f2efe8;
+  --paper-rgb: 242, 239, 232;
+  --accent: #4a7c59;
+  --accent-rgb: 74, 124, 89;
+  --accent-dim: rgba(74, 124, 89, 0.15);
+}
+.theme-sand {
+  --ink: #2a1e13;
+  --ink-rgb: 42, 30, 19;
+  --paper: #f0e6d5;
+  --paper-rgb: 240, 230, 213;
+  --accent: #b87333;
+  --accent-rgb: 184, 115, 51;
+  --accent-dim: rgba(184, 115, 51, 0.15);
+}
+
+/* -------- 3. 基础重置 -------- */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { width: 100%; height: 100%; overflow: hidden; background: #222; }
+body { font-family: var(--font-body); color: var(--ink); -webkit-font-smoothing: antialiased; }
+
+/* -------- 4. Deck 容器 -------- */
+#deck {
+  display: flex; width: 100%; height: 100%;
+  transition: transform var(--dur-slow) var(--ease-out-expo);
+  will-change: transform;
+}
+
+/* -------- 5. Slide 基础 -------- */
+.slide {
+  flex: 0 0 100%; height: 100%; overflow-y: auto;
+  display: grid;
+  grid-template-columns:
+    [bleed-start] var(--safe-x)
+    [content-start] 1fr
+    [content-end] var(--safe-x)
+    [bleed-end];
+  grid-template-rows:
+    [bleed-top] var(--safe-y)
+    [content-top] 1fr
+    [content-bottom] var(--safe-y)
+    [bleed-bottom];
+  background: var(--paper);
+  padding: 0;
+  position: relative;
+}
+.slide.dark { background: var(--ink); color: var(--paper); }
+.slide.dark .accent { color: var(--accent); }
+
+/* 全出血（突破安全区） */
+.full-bleed { grid-column: bleed-start / bleed-end; grid-row: bleed-top / bleed-bottom; }
+
+/* 内容区 */
+.content { grid-column: content-start / content-end; grid-row: content-top / content-bottom; }
+.content-v { grid-column: content-start / content-end; grid-row: bleed-top / bleed-bottom; }
+.content-h { grid-column: bleed-start / bleed-end; grid-row: content-top / content-bottom; }
+
+/* -------- 6. Grid 系统 -------- */
+.grid {
+  display: grid;
+  gap: var(--sp-6);
+}
+.grid-12 { grid-template-columns: repeat(12, 1fr); }
+.grid-2  { grid-template-columns: 1fr 1fr; }
+.grid-3  { grid-template-columns: 1fr 1fr 1fr; }
+.grid-4  { grid-template-columns: 1fr 1fr 1fr 1fr; }
+
+/* 不对称 split */
+.split { display: grid; gap: var(--sp-7); }
+.split-3-9   { grid-template-columns: 3fr 9fr; }
+.split-4-8   { grid-template-columns: 4fr 8fr; }
+.split-5-7   { grid-template-columns: 5fr 7fr; }
+.split-6-6   { grid-template-columns: 6fr 6fr; }
+.split-7-5   { grid-template-columns: 7fr 5fr; }
+.split-8-4   { grid-template-columns: 8fr 4fr; }
+.split-9-3   { grid-template-columns: 9fr 3fr; }
+
+/* -------- 7. 排版 ---------- */
+.display-hero { font-family: var(--font-display); font-size: var(--text-hero); line-height: var(--lh-tight); font-weight: 400; letter-spacing: -0.02em; }
+.display-1    { font-family: var(--font-display); font-size: var(--text-display); line-height: var(--lh-display); font-weight: 400; }
+.display-2    { font-family: var(--font-display); font-size: var(--text-title); line-height: var(--lh-display); font-weight: 400; }
+.title-zh     { font-family: var(--font-zh); font-size: var(--text-display); line-height: var(--lh-display); font-weight: 600; }
+.lead         { font-family: var(--font-body); font-size: var(--text-lead); line-height: var(--lh-lead); font-weight: 300; color: var(--grey); }
+.body         { font-family: var(--font-body); font-size: var(--text-body); line-height: var(--lh-body); font-weight: 400; color: var(--grey); }
+.caption      { font-family: var(--font-body); font-size: var(--text-caption); line-height: 1.4; font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em; color: var(--grey); }
+.meta         { font-family: var(--font-mono); font-size: var(--text-meta); line-height: 1.4; text-transform: uppercase; letter-spacing: 0.1em; color: var(--grey); }
+
+.slide.dark .lead  { color: rgba(255,255,255,0.6); }
+.slide.dark .body  { color: rgba(255,255,255,0.65); }
+.slide.dark .caption { color: rgba(255,255,255,0.5); }
+
+/* 首字下沉 */
+.dropcap::first-letter {
+  font-family: var(--font-display);
+  font-size: 3.2em; font-weight: 700; float: left;
+  line-height: 0.85; margin-right: 0.12em; margin-top: 0.05em;
+  color: var(--accent);
+}
+
+/* 引用线 */
+.pull-quote {
+  font-family: var(--font-display); font-size: var(--text-title);
+  line-height: var(--lh-display); font-style: italic;
+  padding-left: var(--sp-5);
+  border-left: 3px solid var(--accent);
+  color: var(--ink);
+}
+.dark .pull-quote { color: var(--paper); border-left-color: var(--accent); }
+
+/* CSS 多列文字 */
+.columns-2 { column-count: 2; column-gap: var(--sp-6); column-rule: 0.5px solid var(--ink-tint); }
+
+/* -------- 8. 图片系统 -------- */
+.img { overflow: hidden; background: var(--ink-tint); }
+.img img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.img-top    img { object-position: center 10%; }
+.img-center img { object-position: center center; }
+.img-bottom img { object-position: center 85%; }
+
+/* 比例约束 */
+.r-21x9  { aspect-ratio: 21 / 9; }
+.r-16x9  { aspect-ratio: 16 / 9; }
+.r-16x10 { aspect-ratio: 16 / 10; }
+.r-4x3   { aspect-ratio: 4 / 3; }
+.r-3x2   { aspect-ratio: 3 / 2; }
+.r-1x1   { aspect-ratio: 1 / 1; }
+.r-3x4   { aspect-ratio: 3 / 4; }
+
+/* 全高图 */
+.h-full { height: 100%; }
+.h-full img { height: 100%; object-fit: cover; }
+
+/* -------- 9. 布局 Pattern -------- */
+
+/* Pattern 1: 封面 — 居中大字 */
+.layout-cover {
+  place-items: center;
+  text-align: center;
+}
+.layout-cover .subtitle {
+  font-family: var(--font-body); font-size: var(--text-lead);
+  font-weight: 300; letter-spacing: 0.3em; text-transform: uppercase;
+  margin-top: var(--sp-4); color: var(--grey);
+}
+.layout-cover .meta-line { margin-top: var(--sp-8); }
+
+/* Pattern 2: 不对称 split — 左图右文 */
+.layout-split-image-text .text-panel {
+  display: flex; flex-direction: column; justify-content: center;
+}
+.layout-split-image-text .text-panel .kicker {
+  margin-bottom: var(--sp-3);
+}
+.layout-split-image-text .text-panel h2 { margin-bottom: var(--sp-4); }
+.layout-split-image-text .text-panel .body { max-width: 42em; }
+
+/* Pattern 3: 文字浮在图上 (overlap) */
+.layout-overlay {
+  position: relative;
+}
+.layout-overlay .img-backdrop {
+  position: absolute; inset: 0;
+}
+.layout-overlay .img-backdrop img {
+  width: 100%; height: 100%; object-fit: cover;
+}
+.layout-overlay .overlay-panel {
+  position: relative; z-index: 2;
+  align-self: center; justify-self: start;
+  background: var(--paper); padding: var(--sp-7) var(--sp-8);
+  max-width: 520px;
+  box-shadow: 0 4px 40px rgba(0,0,0,0.12);
+}
+.layout-overlay .overlay-panel.right {
+  justify-self: end;
+}
+.layout-overlay.dark .overlay-panel {
+  background: var(--ink);
+}
+.layout-overlay.dark .overlay-panel .lead { color: rgba(255,255,255,0.6); }
+
+/* Pattern 4: 全出血图 + 文字重叠 */
+.layout-bleed-quote {
+  position: relative;
+}
+.layout-bleed-quote .img-full {
+  position: absolute; inset: 0;
+}
+.layout-bleed-quote .img-full img {
+  width: 100%; height: 100%; object-fit: cover;
+}
+.layout-bleed-quote .quote-block {
+  position: absolute;
+  bottom: var(--sp-9); left: var(--sp-9);
+  max-width: 50%;
+}
+.layout-bleed-quote .quote-block .pull-quote {
+  border-left: none; padding-left: 0;
+  color: white; text-shadow: 0 2px 20px rgba(0,0,0,0.3);
+}
+.layout-bleed-quote .quote-block .attribution {
+  margin-top: var(--sp-4); color: rgba(255,255,255,0.7);
+}
+
+/* Pattern 5: 多列正文 (editorial) */
+.layout-editorial .article-header {
+  margin-bottom: var(--sp-7);
+  max-width: 65%;
+}
+.layout-editorial .article-body {
+  column-count: 2; column-gap: var(--sp-7);
+  column-rule: 0.5px solid var(--ink-tint);
+}
+.layout-editorial .article-body p {
+  margin-bottom: var(--sp-4);
+  break-inside: avoid;
+}
+
+/* Pattern 6: 图片网格 (gallery) */
+.layout-gallery {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--sp-3);
+  grid-template-rows: 1fr 1fr;
+}
+.layout-gallery .img-gallery-item:nth-child(1) {
+  grid-column: 1 / span 2; grid-row: 1 / span 2;
+}
+.layout-gallery .img-gallery-item { overflow: hidden; }
+.layout-gallery .img-gallery-item img {
+  width: 100%; height: 100%; object-fit: cover;
+}
+.layout-gallery .img-gallery-item .img-cap {
+  position: absolute; bottom: var(--sp-2); left: var(--sp-3);
+  color: white; font-size: var(--text-caption);
+  text-shadow: 0 1px 8px rgba(0,0,0,0.5);
+  z-index: 2;
+}
+.layout-gallery .img-gallery-item { position: relative; }
+
+/* Pattern 7: 数字大字报 */
+.layout-stats {
+  display: grid; gap: var(--sp-7);
+  grid-template-columns: repeat(3, 1fr);
+}
+.layout-stats .stat-nb {
+  font-family: var(--font-display); font-size: var(--text-hero);
+  line-height: 1; font-weight: 400; color: var(--accent);
+  letter-spacing: -0.03em;
+}
+.layout-stats .stat-label {
+  font-family: var(--font-body); font-size: var(--text-body);
+  font-weight: 500; margin-top: var(--sp-2);
+  text-transform: uppercase; letter-spacing: 0.08em;
+  color: var(--grey);
+}
+
+/* Pattern 8: 收束页 */
+.layout-closing {
+  place-items: center; text-align: center;
+}
+.layout-closing .closing-quote {
+  max-width: 70%;
+  font-family: var(--font-display); font-size: var(--text-display);
+  line-height: var(--lh-display); font-style: italic;
+  margin-bottom: var(--sp-7);
+}
+
+/* -------- 10. 导航 -------- */
+#nav {
+  position: fixed; bottom: 32px; left: 50%; transform: translateX(-50%);
+  display: flex; align-items: center; gap: 8px;
+  background: rgba(0,0,0,0.35); backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  padding: 8px 16px; border-radius: 24px;
+  z-index: 100; user-select: none;
+}
+#nav .dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: rgba(255,255,255,0.35);
+  cursor: pointer; transition: all 300ms;
+}
+#nav .dot.active { background: white; transform: scale(1.6); }
+#nav .dot:hover { background: rgba(255,255,255,0.6); }
+#nav .arrow {
+  color: rgba(255,255,255,0.6); cursor: pointer;
+  padding: 4px 8px; font-size: 14px; transition: color 200ms;
+  font-family: var(--font-body);
+}
+#nav .arrow:hover { color: white; }
+#nav .page-nb {
+  color: rgba(255,255,255,0.4);
+  font-family: var(--font-mono); font-size: 10px;
+  letter-spacing: 0.05em; margin: 0 4px;
+}
+
+/* -------- 11. 动效 -------- */
+.slide {
+  opacity: 0; transition: opacity 600ms var(--ease-out-expo);
+}
+.slide.active {
+  opacity: 1;
+}
+.slide [data-anim] {
+  opacity: 0; transform: translateY(20px);
+  transition: opacity 600ms var(--ease-out-expo), transform 600ms var(--ease-out-expo);
+}
+.slide.active [data-anim] {
+  opacity: 1; transform: translateY(0);
+}
+/* 入场延迟 */
+.slide [data-delay="1"] { transition-delay: 100ms; }
+.slide [data-delay="2"] { transition-delay: 200ms; }
+.slide [data-delay="3"] { transition-delay: 300ms; }
+.slide [data-delay="4"] { transition-delay: 400ms; }
+.slide [data-delay="5"] { transition-delay: 500ms; }
+
+/* 数字弹入 */
+.slide.active .anim-scale {
+  animation: scaleIn 700ms var(--ease-out-expo) forwards;
+}
+@keyframes scaleIn {
+  from { opacity: 0; transform: scale(0.6) translateY(20px); }
+  to   { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+/* -------- 12. 低功耗模式 -------- */
+body.low-power .slide [data-anim],
+body.low-power .anim-scale { opacity: 1 !important; transform: none !important; animation: none !important; transition: none !important; }
+body.low-power #webgl-bg { display: none; }
+
+/* -------- 13. 响应式 -------- */
+@media (max-width: 768px) {
+  :root {
+    --safe-x: 24px;
+    --safe-y: 24px;
+    --text-hero: 13vw;
+    --text-display: 8vw;
+    --text-title: 5vw;
+    --sp-7: 24px;
+  }
+  .split { grid-template-columns: 1fr !important; }
+  .grid-12 { grid-template-columns: 1fr 1fr; }
+  .layout-gallery { grid-template-columns: 1fr 1fr; }
+  .layout-stats { grid-template-columns: 1fr; }
+  .layout-editorial .article-header { max-width: 100%; }
+  .layout-bleed-quote .quote-block { max-width: 80%; bottom: var(--sp-6); left: var(--sp-5); }
+  .layout-overlay .overlay-panel { max-width: 80%; padding: var(--sp-5); }
+  .columns-2 { column-count: 1; }
+}
+</style>
+</head>
+<body class="theme-sand">
+
+<!-- ==================== SLIDE DECK ==================== -->
+<div id="deck">
+
+  <!-- --- Slide 1: Cover --- -->
+  <section class="slide active layout-cover dark" data-layout="cover">
+    <div class="full-bleed" style="position:absolute;inset:0;z-index:0;">
+      <div style="width:100%;height:100%;background:linear-gradient(135deg, #1a1814 0%, #2a1e13 50%, #3d2c1a 100%);"></div>
+    </div>
+    <div class="content" style="position:relative;z-index:2;">
+      <div data-anim>
+        <div class="meta" data-delay="1" style="margin-bottom:var(--sp-4);color:var(--accent);">Issue № 01</div>
+        <h1 class="display-hero" data-delay="2" style="color:var(--paper);">
+          新的工作<br>方式
+        </h1>
+        <p class="subtitle" data-delay="3">How We Work · 2026</p>
+        <p class="meta meta-line" data-delay="4">Folio · Issue № 01</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- --- Slide 2: Asymmetric Split (Image Left, Text Right) --- -->
+  <section class="slide layout-split-image-text" data-layout="split-4-8">
+    <div class="content split-4-8" style="align-items:stretch;">
+      <div class="img r-4x3 h-full" data-anim data-delay="1">
+        <img src="https://images.unsplash.com/photo-1497366216548-37526070297c?w=800&q=80" alt="Office">
+      </div>
+      <div class="text-panel" data-anim data-delay="2">
+        <div class="caption kicker" style="color:var(--accent);">The Shift</div>
+        <h2 class="display-1" style="margin-bottom:var(--sp-5);">从工具到<br>协作方式</h2>
+        <p class="lead" style="margin-bottom:var(--sp-4);">技术的进步不仅改变了我们使用的工具，更深刻地重塑了人与人之间的协作模式。</p>
+        <p class="body">当 AI 能够处理越来越多的工作流节点，人类的角色正在从"执行者"转向"策展人"。这不是一个渐进的演变，而是一个范式的转换。</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- --- Slide 3: Image + Text Overlap --- -->
+  <section class="slide layout-overlay" data-layout="overlap-right">
+    <div class="full-bleed img-backdrop" data-anim>
+      <img src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=1200&q=80" alt="Team collaboration">
+    </div>
+    <div class="overlay-panel right" data-anim data-delay="2">
+      <div class="caption" style="color:var(--accent);margin-bottom:var(--sp-3);">Key Insight</div>
+      <h2 class="display-2" style="margin-bottom:var(--sp-4);">策展人的时代</h2>
+      <p class="lead">在信息过载的时代，最有价值的能力不是生产更多内容，而是做出更好的选择。</p>
+    </div>
+  </section>
+
+  <!-- --- Slide 4: Full-Bleed Image + Quote --- -->
+  <section class="slide layout-bleed-quote" data-layout="bleed-quote">
+    <div class="full-bleed img-full" data-anim>
+      <img src="https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=1400&q=80" alt="Workspace" style="filter:brightness(0.5);">
+    </div>
+    <div class="quote-block" data-anim data-delay="2">
+      <div class="pull-quote" style="border-left:none;padding-left:0;font-size:var(--text-display);color:white;font-style:italic;">
+        "The best way to predict the future is to invent it."
+      </div>
+      <p class="attribution meta" style="margin-top:var(--sp-5);">— Alan Kay</p>
+    </div>
+  </section>
+
+  <!-- --- Slide 5: Editorial Text (CSS Columns) --- -->
+  <section class="slide layout-editorial" data-layout="editorial">
+    <div class="content">
+      <div class="article-header" data-anim>
+        <div class="caption" style="color:var(--accent);margin-bottom:var(--sp-3);">Essay</div>
+        <h2 class="display-1">重新定义<br>生产力</h2>
+      </div>
+      <div class="article-body body" data-anim data-delay="2">
+        <p class="dropcap">生产力的概念正在经历一场根本性的重构。在工业时代，生产力意味着在单位时间内生产更多的东西。但在知识工作领域，这个定义已经不再适用。</p>
+        <p>当我们审视那些真正产生突破性创新的团队时，会发现他们的共同点不是"做更多的事"，而是"做更少但更重要的事"。这种区别看似细微，实则代表了完全不同的思维方式。</p>
+        <p>AI 的介入进一步加速了这一转变。当机器能够处理重复性的认知劳动时，人类的独特价值转向了判断力、创造力和同理心——这些恰恰是难以量化的。</p>
+        <p>因此，新一代的生产力工具不应该只是帮我们更快地完成任务，而应该帮我们更好地决定做什么、以及为什么做。</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- --- Slide 6: Stats (Data Hero) --- -->
+  <section class="slide dark" data-layout="stats" style="background:#1a1814;">
+    <div class="content" style="display:flex;flex-direction:column;justify-content:center;">
+      <div class="caption" data-anim style="color:var(--accent);margin-bottom:var(--sp-7);text-align:center;">The Numbers</div>
+      <div class="layout-stats" data-anim data-delay="1">
+        <div style="text-align:center;">
+          <div class="stat-nb anim-scale">73%</div>
+          <div class="stat-label">远程团队<br>效率提升</div>
+        </div>
+        <div style="text-align:center;">
+          <div class="stat-nb anim-scale">2.4×</div>
+          <div class="stat-label">AI 辅助决策<br>准确率</div>
+        </div>
+        <div style="text-align:center;">
+          <div class="stat-nb anim-scale">89%</div>
+          <div class="stat-label">知识工作者<br>重新定义角色</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- --- Slide 7: Image Gallery --- -->
+  <section class="slide" data-layout="gallery">
+    <div class="content-v" style="display:grid;grid-template-rows:auto 1fr;gap:var(--sp-5);padding-top:var(--safe-y);padding-bottom:var(--safe-y);">
+      <div data-anim>
+        <div class="caption" style="color:var(--accent);">Gallery</div>
+        <h2 class="display-2">场景实录</h2>
+      </div>
+      <div class="layout-gallery" data-anim data-delay="2" style="flex:1;">
+        <div class="img-gallery-item img"><img src="https://images.unsplash.com/photo-1600880292203-757bb62b4baf?w=600&q=80" alt="Meeting"><span class="img-cap">协作工作坊</span></div>
+        <div class="img-gallery-item img"><img src="https://images.unsplash.com/photo-1553877522-43269d4ea984?w=600&q=80" alt="Strategy"><span class="img-cap">策略会</span></div>
+        <div class="img-gallery-item img"><img src="https://images.unsplash.com/photo-1552664730-d307ca884978?w=600&q=80" alt="Planning"><span class="img-cap">规划中</span></div>
+        <div class="img-gallery-item img"><img src="https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=600&q=80" alt="Team"><span class="img-cap">团队时刻</span></div>
+        <div class="img-gallery-item img"><img src="https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=600&q=80" alt="Office"><span class="img-cap">办公空间</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- --- Slide 8: Closing --- -->
+  <section class="slide layout-closing dark" data-layout="closing" style="background:linear-gradient(135deg, #1a1814 0%, #2a1e13 50%, #3d2c1a 100%);">
+    <div class="content" data-anim>
+      <blockquote class="closing-quote" data-delay="1">
+        "未来已经来临，<br>只是分布不均。"
+      </blockquote>
+      <p class="meta" data-delay="3" style="color:var(--accent);margin-top:var(--sp-6);">William Gibson</p>
+      <p class="meta" data-delay="4" style="margin-top:var(--sp-2);">Folio · v0.1</p>
+    </div>
+  </section>
+
+</div>
+<!-- /#deck -->
+
+<!-- ==================== NAVIGATION ==================== -->
+<div id="nav">
+  <span class="arrow" id="nav-prev">←</span>
+  <span id="nav-dots"></span>
+  <span class="page-nb" id="nav-count">1 / 8</span>
+  <span class="arrow" id="nav-next">→</span>
+</div>
+
+<script>
+(function() {
+  'use strict';
+
+  const deck = document.getElementById('deck');
+  const slides = document.querySelectorAll('.slide');
+  const dotContainer = document.getElementById('nav-dots');
+  const countDisplay = document.getElementById('nav-count');
+  const total = slides.length;
+  let current = 0;
+
+  // 生成导航点
+  for (let i = 0; i < total; i++) {
+    const dot = document.createElement('span');
+    dot.className = 'dot' + (i === 0 ? ' active' : '');
+    dot.dataset.index = i;
+    dot.addEventListener('click', () => goTo(i));
+    dotContainer.appendChild(dot);
+  }
+
+  function goTo(index) {
+    if (index < 0 || index >= total) return;
+    current = index;
+    // 移动 deck
+    deck.style.transform = `translateX(-${current * 100}%)`;
+    // 更新 active slide
+    slides.forEach((s, i) => s.classList.toggle('active', i === current));
+    // 更新导航点
+    document.querySelectorAll('.dot').forEach((d, i) => d.classList.toggle('active', i === current));
+    countDisplay.textContent = `${current + 1} / ${total}`;
+  }
+
+  // 键盘导航
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') {
+      e.preventDefault(); goTo(current + 1);
+    }
+    if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+      e.preventDefault(); goTo(current - 1);
+    }
+    // ESC — 回到第一页
+    if (e.key === 'Escape') { e.preventDefault(); goTo(0); }
+    // B — 低功耗模式
+    if (e.key === 'b' || e.key === 'B') {
+      document.body.classList.toggle('low-power');
+    }
+  });
+
+  // 滚轮翻页
+  let wheelTimeout = false;
+  document.addEventListener('wheel', (e) => {
+    if (wheelTimeout) return;
+    wheelTimeout = true;
+    setTimeout(() => wheelTimeout = false, 600);
+    if (e.deltaY > 0) goTo(current + 1);
+    else goTo(current - 1);
+  }, { passive: true });
+
+  // 触屏支持
+  let touchStartX = 0, touchStartY = 0;
+  document.addEventListener('touchstart', (e) => {
+    touchStartX = e.touches[0].clientX;
+    touchStartY = e.touches[0].clientY;
+  }, { passive: true });
+  document.addEventListener('touchend', (e) => {
+    const dx = e.changedTouches[0].clientX - touchStartX;
+    const dy = e.changedTouches[0].clientY - touchStartY;
+    if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy)) {
+      if (dx < 0) goTo(current + 1);
+      else goTo(current - 1);
+    }
+  }, { passive: true });
+
+  // 按钮
+  document.getElementById('nav-prev').addEventListener('click', () => goTo(current - 1));
+  document.getElementById('nav-next').addEventListener('click', () => goTo(current + 1));
+
+  // 初始化第一页动画
+  slides[0].classList.add('active');
+
+})();
+</script>
+</body>
+</html>
