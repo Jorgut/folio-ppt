@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Folio · Wireframe Sheet</title>
+<style>
+  /* Print-friendly wireframe sheet */
+  @page { size: A4 landscape; margin: 12mm; }
+  @media print {
+    body { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+    .no-print { display: none !important; }
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: #f5f5f5;
+    color: #333;
+    padding: 24px;
+  }
+
+  h1 { font-size: 24px; font-weight: 600; margin-bottom: 4px; }
+  .subtitle { font-size: 13px; color: #888; margin-bottom: 24px; }
+
+  /* Wireframe grid */
+  .wireframe-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 20px;
+  }
+
+  /* Individual wireframe card */
+  .wireframe-card {
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 16px;
+    page-break-inside: avoid;
+  }
+
+  .wireframe-card h3 {
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 4px;
+    color: #1a1a1a;
+  }
+
+  .wireframe-card .meta {
+    font-size: 11px;
+    color: #888;
+    margin-bottom: 12px;
+  }
+
+  /* Wireframe box */
+  .wf-box {
+    border: 2px solid #ccc;
+    border-radius: 2px;
+    background: #fafafa;
+    position: relative;
+  }
+
+  .wf-box.text {
+    background: #e8e8e8;
+    border: 1px dashed #aaa;
+  }
+
+  .wf-box.image {
+    background: #d0d0d0;
+    border: 1px solid #bbb;
+  }
+
+  .wf-box.label {
+    font-size: 10px;
+    color: #666;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    pointer-events: none;
+  }
+
+  /* Cover wireframe */
+  .wf-cover {
+    width: 100%;
+    height: 180px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+  .wf-cover .hero { width: 60%; height: 32px; }
+  .wf-cover .sub { width: 40%; height: 16px; }
+
+  /* Split wireframe */
+  .wf-split {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 8px;
+    height: 180px;
+  }
+  .wf-split .text-col { display: flex; flex-direction: column; gap: 6px; padding: 8px; }
+  .wf-split .img-col { height: 100%; }
+
+  /* Overlap wireframe */
+  .wf-overlap {
+    width: 100%;
+    height: 180px;
+    position: relative;
+  }
+  .wf-overlap .bg { width: 100%; height: 100%; }
+  .wf-overlap .panel {
+    position: absolute;
+    bottom: 16px;
+    left: 16px;
+    width: 55%;
+    height: 80px;
+    background: rgba(255,255,255,0.92);
+    border: 1px solid #ccc;
+    padding: 8px;
+  }
+
+  /* Stats wireframe */
+  .wf-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    height: 180px;
+    padding: 16px 8px;
+  }
+  .wf-stat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+  }
+  .wf-stat .num { width: 60%; height: 28px; }
+  .wf-stat .lbl { width: 40%; height: 10px; }
+
+  /* Editorial wireframe */
+  .wf-editorial {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    height: 180px;
+    padding: 8px;
+  }
+
+  /* Gallery wireframe */
+  .wf-gallery {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: 1fr 1fr;
+    gap: 6px;
+    height: 180px;
+  }
+
+  /* Closing wireframe */
+  .wf-closing {
+    width: 100%;
+    height: 180px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+  }
+  .wf-closing .quote { width: 70%; height: 24px; }
+  .wf-closing .attr { width: 30%; height: 12px; }
+
+  /* Annotation area */
+  .annotations {
+    margin-top: 24px;
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 16px;
+  }
+  .annotations h3 {
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 12px;
+  }
+  .annotation-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 12px;
+  }
+  .annotation-item {
+    border: 1px solid #eee;
+    border-radius: 4px;
+    padding: 12px;
+  }
+  .annotation-item h4 {
+    font-size: 12px;
+    font-weight: 600;
+    margin-bottom: 6px;
+    color: #555;
+  }
+  .annotation-item .field {
+    font-size: 11px;
+    color: #888;
+    margin-bottom: 4px;
+  }
+  .annotation-item .field strong { color: #333; }
+
+  /* Editable fields */
+  .editable {
+    border-bottom: 1px dashed #ccc;
+    min-height: 16px;
+    padding: 2px 4px;
+    font-size: 11px;
+    color: #999;
+  }
+  .editable:focus {
+    outline: none;
+    border-bottom-color: #94352b;
+    color: #333;
+  }
+
+  /* Instructions */
+  .instructions {
+    background: #fff8f0;
+    border: 1px solid #e8d4c0;
+    border-radius: 4px;
+    padding: 16px;
+    margin-bottom: 24px;
+    font-size: 13px;
+    line-height: 1.6;
+  }
+  .instructions h2 {
+    font-size: 15px;
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: #94352b;
+  }
+  .instructions ol { padding-left: 20px; }
+  .instructions li { margin-bottom: 4px; }
+</style>
+</head>
+<body>
+
+<h1>Folio · Wireframe Sheet</h1>
+<p class="subtitle">Print this sheet or use in browser · Each card = one slide wireframe · Fill in content before writing HTML</p>
+
+<div class="instructions no-print">
+  <h2>How to Use This Sheet</h2>
+  <ol>
+    <li><strong>Step 1 (IA)</strong>: Complete your <em>Deck Structure Document</em> — know your narrative arc, content blocks, and page count.</li>
+    <li><strong>Step 2 (Lo-fi)</strong>: On this sheet, sketch each slide's wireframe — just boxes and labels, no details.</li>
+    <li><strong>Step 3 (Mid-fi)</strong>: Add grid annotations, font sizes, image ratios in the annotation area below each wireframe.</li>
+    <li><strong>Step 4 (Hi-fi)</strong>: Fill in real content, exact spacing, and responsive breakpoints.</li>
+    <li><strong>Step 5</strong>: Open <code>index.html</code> template and implement each wireframe as a slide.</li>
+  </ol>
+</div>
+
+<div class="wireframe-grid">
+
+  <!-- COVER -->
+  <div class="wireframe-card">
+    <h3>1 · Cover</h3>
+    <div class="meta">Hero text · Centered or offset</div>
+    <div class="wf-box wf-cover">
+      <div class="wf-box text hero"><span class="wf-box label">HERO TEXT</span></div>
+      <div class="wf-box text sub"><span class="wf-box label">Subtitle</span></div>
+    </div>
+    <div class="annotations">
+      <div class="annotation-item">
+        <h4>Content</h4>
+        <div class="editable" contenteditable>Enter title here...</div>
+      </div>
+      <div class="annotation-item">
+        <h4>Notes</h4>
+        <div class="editable" contenteditable>Grid: centered / offset...</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SPLIT 4-8 -->
+  <div class="wireframe-card">
+    <h3>2 · Split 4-8</h3>
+    <div class="meta">Text left · Image right (1:2 ratio)</div>
+    <div class="wf-box wf-split">
+      <div class="text-col">
+        <div class="wf-box text" style="height:20px"><span class="wf-box label">Title</span></div>
+        <div class="wf-box text" style="height:12px"><span class="wf-box label">Lead</span></div>
+        <div class="wf-box text" style="flex:1"><span class="wf-box label">Body text...</span></div>
+        <div class="wf-box text" style="height:8px"><span class="wf-box label">Meta</span></div>
+      </div>
+      <div class="wf-box image img-col"><span class="wf-box label">Image 16:10</span></div>
+    </div>
+    <div class="annotations">
+      <div class="annotation-item">
+        <h4>Content</h4>
+        <div class="editable" contenteditable>Text + Image...</div>
+      </div>
+      <div class="annotation-item">
+        <h4>Notes</h4>
+        <div class="editable" contenteditable>Grid: 4fr 8fr...</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SPLIT 3-9 -->
+  <div class="wireframe-card">
+    <h3>3 · Split 3-9</h3>
+    <div class="meta">Text narrow left · Image wide right</div>
+    <div class="wf-box" style="display:grid;grid-template-columns:1fr 3fr;gap:8px;height:180px">
+      <div style="display:flex;flex-direction:column;gap:6px;padding:8px">
+        <div class="wf-box text" style="height:16px"><span class="wf-box label">Title</span></div>
+        <div class="wf-box text" style="flex:1"><span class="wf-box label">Body...</span></div>
+      </div>
+      <div class="wf-box image"><span class="wf-box label">Image 16:9</span></div>
+    </div>
+    <div class="annotations">
+      <div class="annotation-item">
+        <h4>Content</h4>
+        <div class="editable" contenteditable>Narrow text + wide image...</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- OVERLAP -->
+  <div class="wireframe-card">
+    <h3>4 · Overlap</h3>
+    <div class="meta">Full-bleed image + floating panel</div>
+    <div class="wf-box wf-overlap">
+      <div class="wf-box image bg"><span class="wf-box label">Full Bleed Image</span></div>
+      <div class="wf-box panel">
+        <div class="wf-box text" style="height:12px;margin-bottom:4px"><span class="wf-box label">Title</span></div>
+        <div class="wf-box text" style="height:8px;margin-bottom:2px"><span class="wf-box label">Text...</span></div>
+        <div class="wf-box text" style="height:8px"><span class="wf-box label">More text...</span></div>
+      </div>
+    </div>
+    <div class="annotations">
+      <div class="annotation-item">
+        <h4>Content</h4>
+        <div class="editable" contenteditable>Image + floating text panel...</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- BLEED QUOTE -->
+  <div class="wireframe-card">
+    <h3>5 · Bleed Quote</h3>
+    <div class="meta">Full-bleed image + large quote</div>
+    <div class="wf-box" style="width:100%;height:180px;position:relative">
+      <div class="wf-box image" style="width:100%;height:100%"><span class="wf-box label">Full Bleed Image</span></div>
+      <div style="position:absolute;bottom:20px;left:16px;right:16px;text-align:center">
+        <div class="wf-box text" style="height:24px;width:80%;margin:0 auto 6px"><span class="wf-box label">Large Quote</span></div>
+        <div class="wf-box text" style="height:10px;width:30%;margin:0 auto"><span class="wf-box label">— Attribution</span></div>
+      </div>
+    </div>
+    <div class="annotations">
+      <div class="annotation-item">
+        <h4>Content</h4>
+        <div class="editable" contenteditable>"Quote text..." — Author</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- EDITORIAL -->
+  <div class="wireframe-card">
+    <h3>6 · Editorial</h3>
+    <div class="meta">CSS two-column body text</div>
+    <div class="wf-box" style="padding:12px;height:180px;display:flex;flex-direction:column;gap:8px">
+      <div class="wf-box text" style="height:18px;width:50%"><span class="wf-box label">Section Title</span></div>
+      <div class="wf-box" style="flex:1;display:grid;grid-template-columns:1fr 1fr;gap:8px">
+        <div class="wf-box text"><span class="wf-box label">Column 1 body text with drop cap...</span></div>
+        <div class="wf-box text"><span class="wf-box label">Column 2 body text with pull quote...</span></div>
+      </div>
+    </div>
+    <div class="annotations">
+      <div class="annotation-item">
+        <h4>Content</h4>
+        <div class="editable" contenteditable>Long-form text in two columns...</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STATS -->
+  <div class="wireframe-card">
+    <h3>7 · Stats</h3>
+    <div class="meta">Data hero — big numbers</div>
+    <div class="wf-box wf-stats">
+      <div class="wf-stat">
+        <div class="wf-box text num"><span class="wf-box label">97%</span></div>
+        <div class="wf-box text lbl"><span class="wf-box label">label</span></div>
+      </div>
+      <div class="wf-stat">
+        <div class="wf-box text num"><span class="wf-box label">3.2M</span></div>
+        <div class="wf-box text lbl"><span class="wf-box label">label</span></div>
+      </div>
+      <div class="wf-stat">
+        <div class="wf-box text num"><span class="wf-box label">42x</span></div>
+        <div class="wf-box text lbl"><span class="wf-box label">label</span></div>
+      </div>
+    </div>
+    <div class="annotations">
+      <div class="annotation-item">
+        <h4>Content</h4>
+        <div class="editable" contenteditable>3 core metrics...</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- GALLERY -->
+  <div class="wireframe-card">
+    <h3>8 · Gallery</h3>
+    <div class="meta">Image grid — auto-fill columns</div>
+    <div class="wf-box wf-gallery">
+      <div class="wf-box image"><span class="wf-box label">img</span></div>
+      <div class="wf-box image"><span class="wf-box label">img</span></div>
+      <div class="wf-box image"><span class="wf-box label">img</span></div>
+      <div class="wf-box image"><span class="wf-box label">img</span></div>
+      <div class="wf-box image"><span class="wf-box label">img</span></div>
+      <div class="wf-box image"><span class="wf-box label">img</span></div>
+    </div>
+    <div class="annotations">
+      <div class="annotation-item">
+        <h4>Content</h4>
+        <div class="editable" contenteditable>6 images in grid...</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CLOSING -->
+  <div class="wireframe-card">
+    <h3>9 · Closing</h3>
+    <div class="meta">Quote or CTA — centered</div>
+    <div class="wf-box wf-closing">
+      <div class="wf-box text quote"><span class="wf-box label">Closing Quote / CTA</span></div>
+      <div class="wf-box text attr"><span class="wf-box label">— Attribution</span></div>
+    </div>
+    <div class="annotations">
+      <div class="annotation-item">
+        <h4>Content</h4>
+        <div class="editable" contenteditable>"Final message..." — Source</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Page-level annotations -->
+<div class="annotations" style="margin-top:24px">
+  <h3>Deck-Level Annotations</h3>
+  <div class="annotation-grid">
+    <div class="annotation-item">
+      <h4>Target Audience</h4>
+      <div class="editable" contenteditable>Who is this deck for?</div>
+    </div>
+    <div class="annotation-item">
+      <h4>Core Message (1 sentence)</h4>
+      <div class="editable" contenteditable>What should audience remember?</div>
+    </div>
+    <div class="annotation-item">
+      <h4>Duration / Page Count</h4>
+      <div class="editable" contenteditable>X minutes / Y pages</div>
+    </div>
+    <div class="annotation-item">
+      <h4>Narrative Arc</h4>
+      <div class="editable" contenteditable>Hook → Core → Takeaway...</div>
+    </div>
+    <div class="annotation-item">
+      <h4>Theme Color</h4>
+      <div class="editable" contenteditable>Ink Classic / Indigo / Forest / Sand</div>
+    </div>
+    <div class="annotation-item">
+      <h4>Special Requirements</h4>
+      <div class="editable" contenteditable>Data viz, animations, print...</div>
+    </div>
+  </div>
+</div>
+
+<p style="margin-top:24px;font-size:12px;color:#999;text-align:center">
+  Folio Wireframe Sheet · <a href="https://github.com/Jorgut/folio" style="color:#94352b">github.com/Jorgut/folio</a> · MIT License
+</p>
+
+</body>
+</html>

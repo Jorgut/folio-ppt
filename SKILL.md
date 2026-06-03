@@ -16,10 +16,46 @@ HTML (源文件) ─┬─ PPTX ───→ PowerPoint / Google Slides / Keynot
 ### 核心能力
 
 1. **杂志级排版** — 不对称网格、图文重叠、全出血图、CSS 多列正文、大字号对比
-2. **多格式导出** — PPTX（截图保真）、PDF（可编辑文字、可导入 InDesign）
+2. **多格式导出** — PPTX（Native 全文字可编辑）、PDF（可导入 InDesign）
 3. **8 种杂志布局** — 封面、不对称 split、overlap、full-bleed 引语、editorial 正文、数据大字报、图片画廊、收束页
 4. **交互式演示** — 缩略图概览、全屏、URL Hash 定位、快捷键面板、进度条
 5. **跨工具协作** — 输出格式兼容 Figma / Google Slides / Keynote / InDesign
+
+## 设计工作流（核心方法论）
+
+> 不要跳过 IA 和 wireframe 直接写 HTML。结构错了后面全白费。
+
+```
+IA (信息架构) → Lo-fi Wireframe → Mid-fi → Hi-fi → HTML Mockup → Native Export
+```
+
+### 完整流程
+
+| 阶段 | 活动 | 产出 | 参考文件 |
+|------|------|------|---------|
+| **Phase A: IA** | 内容盘点、受众分析、叙事弧 | Deck Structure Document | `references/information-architecture.md` |
+| **Phase B: Lo-fi** | 方块 + 占位符，5-10 分钟/页 | 手绘或简单数字草图 | `references/wireframing.md` |
+| **Phase C: Mid-fi** | Grid + 标注 + 内容层级 | 标注完整的线框图 | `references/wireframing.md` |
+| **Phase D: Hi-fi** | 真实内容 + 精确间距 | 开发交接文档 | `references/wireframing.md` |
+| **Phase E: HTML** | 用 Folio 模板实现 | index.html (mockup) | 本文件 Step 2-4 |
+| **Phase F: Export** | Native PPTX / PDF | .pptx / .pdf | 本文件 Step 4 |
+
+### 快速开始
+
+1. **IA 先行**：用 `references/information-architecture.md` 的模板做内容盘点
+2. **Wireframe**：用 `templates/wireframe-sheet.html` 做线框图（打印或浏览器填写）
+3. **实现**：按本文件 Step 2-4 填充 HTML
+4. **导出**：用 `scripts/export-pptx.mjs` 或 `scripts/export-pdf.mjs`
+
+### 参考文件
+
+| 文件 | 内容 |
+|------|------|
+| `references/presentation-design.md` | 编辑设计模式、NYT Magazine、Stripe Press、Monocle 等参考 |
+| `references/information-architecture.md` | IA 五阶段流程、内容盘点模板、叙事弧模型 |
+| `references/wireframing.md` | Lo-fi/Mid-fi/Hi-fi 定义、线框图模板、验证检查清单 |
+| `references/checklist.md` | P0-P3 质量检查清单 |
+| `templates/wireframe-sheet.html` | 可打印的线框图纸（9 种布局 + 注释区）|
 
 ### 设计原则
 
