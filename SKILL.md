@@ -45,7 +45,7 @@ IA (信息架构) → Lo-fi Wireframe → Mid-fi → Hi-fi → HTML Mockup → N
 1. **IA 先行**：用 `references/information-architecture.md` 的模板做内容盘点
 2. **Wireframe**：用 `templates/wireframe-sheet.html` 做线框图（打印或浏览器填写）
 3. **实现**：按本文件 Step 2-4 填充 HTML
-4. **导出**：用 `scripts/export-pptx.mjs` 或 `scripts/export-pdf.mjs`
+4. **导出**：用 `scripts/export-native-pptx.mjs` 或 `scripts/export-print-pdf.mjs`
 
 ### 参考文件
 
@@ -178,7 +178,7 @@ open 项目/ppt/index.html
 
 ### Google Slides / Keynote 协作
 
-1. 导出 PPTX（`export-pptx.mjs`）
+1. 导出 PPTX（`export-native-pptx.mjs`）
 2. 上传至 Google Drive 或用 Keynote 打开
 3. 可在其中添加动画、过渡效果、演讲者备注
 4. 如果在 Google Slides 中修改后需同步回 HTML：截图对比 → 手动更新 HTML
