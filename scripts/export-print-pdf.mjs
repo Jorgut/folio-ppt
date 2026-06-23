@@ -1,218 +1,298 @@
 #!/usr/bin/env node
-/**
- * Folio — HTML Magazine → Print-Ready PDF Export
- *
- * Renders each slide individually with Playwright, then assembles a
- * print-oriented PDF with trim, bleed, and vector crop marks using pdf-lib.
- *
- * Usage:
- *   node scripts/export-print-pdf.mjs path/to/index.html
- *
- * Dependencies:
- *   npm install playwright pdf-lib
- *   npx playwright install chromium
- */
 
-import { existsSync, writeFileSync } from 'fs';
-import { basename, extname, resolve } from 'path';
 import { chromium } from 'playwright';
-import { PDFDocument, PDFName, grayscale } from 'pdf-lib';
+import { PDFDocument, cmyk } from 'pdf-lib';
+import { existsSync, mkdtempSync, readFileSync, rmSync, unlinkSync, writeFileSync } from 'fs';
+import { tmpdir } from 'os';
+import { join, resolve } from 'path';
+import { pathToFileURL } from 'url';
 
-const SLIDE_W = 1280;
-const SLIDE_H = 720;
-const PX_TO_PT = 72 / 96;
-const MM_TO_PT = 72 / 25.4;
-
+const SLIDE_W_PX = 1280;
+const SLIDE_H_PX = 720;
+const PX_PER_IN = 96;
+const PT_PER_IN = 72;
+const MM_PER_IN = 25.4;
 const BLEED_MM = 3;
-const BLEED_PT = BLEED_MM * MM_TO_PT;
-const SLUG_PT = BLEED_PT;
-const CROP_MARK_LENGTH_PT = BLEED_PT;
-const CROP_MARK_THICKNESS_PT = 0.5;
-
-const TRIM_W_PT = SLIDE_W * PX_TO_PT;
-const TRIM_H_PT = SLIDE_H * PX_TO_PT;
+const CROP_MM = 5;
+const BLEED_PX = (BLEED_MM / MM_PER_IN) * PX_PER_IN;
+const BLEED_IN = BLEED_MM / MM_PER_IN;
+const BLEED_PT = BLEED_IN * PT_PER_IN;
+const CROP_PT = (CROP_MM / MM_PER_IN) * PT_PER_IN;
+const TRIM_W_IN = SLIDE_W_PX / PX_PER_IN;
+const TRIM_H_IN = SLIDE_H_PX / PX_PER_IN;
+const TRIM_W_PT = TRIM_W_IN * PT_PER_IN;
+const TRIM_H_PT = TRIM_H_IN * PT_PER_IN;
+const BLEED_W_IN = TRIM_W_IN + (BLEED_IN * 2);
+const BLEED_H_IN = TRIM_H_IN + (BLEED_IN * 2);
 const BLEED_W_PT = TRIM_W_PT + (BLEED_PT * 2);
 const BLEED_H_PT = TRIM_H_PT + (BLEED_PT * 2);
-const PAGE_W_PT = TRIM_W_PT + 2 * (BLEED_PT + SLUG_PT);
-const PAGE_H_PT = TRIM_H_PT + 2 * (BLEED_PT + SLUG_PT);
+const MEDIA_W_PT = BLEED_W_PT + (CROP_PT * 2);
+const MEDIA_H_PT = BLEED_H_PT + (CROP_PT * 2);
+const FULL_W_PX = SLIDE_W_PX + (BLEED_PX * 2);
+const FULL_H_PX = SLIDE_H_PX + (BLEED_PX * 2);
+const LINE_WIDTH_PT = 0.5;
+const IMAGE_SCALE = 1.04;
 
-const TRIM_X_PT = SLUG_PT + BLEED_PT;
-const TRIM_Y_PT = SLUG_PT + BLEED_PT;
-const BLEED_X_PT = SLUG_PT;
-const BLEED_Y_PT = SLUG_PT;
+function toFileUrl(filePath) {
+  return pathToFileURL(filePath).href;
+}
+
+function toPrintOutputPath(filePath) {
+  return filePath.replace(/\.html?$/i, '.print.pdf');
+}
+
+function formatInches(value) {
+  return `${value.toFixed(4)}in`;
+}
+
+function createExportStyles() {
+  return `
+    @page {
+      size: ${formatInches(BLEED_W_IN)} ${formatInches(BLEED_H_IN)};
+      margin: 0;
+    }
+
+    html,
+    body {
+      margin: 0 !important;
+      padding: 0 !important;
+      width: 100% !important;
+      height: auto !important;
+      overflow: visible !important;
+      background: #ffffff !important;
+      -webkit-print-color-adjust: exact !important;
+      print-color-adjust: exact !important;
+    }
+
+    #print-export-root {
+      display: block !important;
+      width: ${FULL_W_PX}px !important;
+      margin: 0 !important;
+      padding: 0 !important;
+    }
+
+    .print-page {
+      position: relative !important;
+      width: ${FULL_W_PX}px !important;
+      height: ${FULL_H_PX}px !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      overflow: hidden !important;
+      background: #ffffff !important;
+      break-after: page !important;
+      page-break-after: always !important;
+    }
+
+    .print-page:last-child {
+      break-after: auto !important;
+      page-break-after: auto !important;
+    }
+
+    .print-slide {
+      position: absolute !important;
+      left: ${BLEED_PX}px !important;
+      top: ${BLEED_PX}px !important;
+      width: ${SLIDE_W_PX}px !important;
+      height: ${SLIDE_H_PX}px !important;
+      min-width: ${SLIDE_W_PX}px !important;
+      max-width: ${SLIDE_W_PX}px !important;
+      min-height: ${SLIDE_H_PX}px !important;
+      max-height: ${SLIDE_H_PX}px !important;
+      margin: 0 !important;
+      flex: none !important;
+      opacity: 1 !important;
+      transform: none !important;
+      overflow: visible !important;
+    }
+
+    .print-slide,
+    .print-slide * {
+      animation: none !important;
+      transition: none !important;
+    }
+
+    .print-slide [data-anim] {
+      opacity: 1 !important;
+      transform: none !important;
+      filter: none !important;
+    }
+
+    .print-slide .full-bleed {
+      width: calc(100% + ${BLEED_PX * 2}px) !important;
+      height: calc(100% + ${BLEED_PX * 2}px) !important;
+      margin-left: -${BLEED_PX}px !important;
+      margin-right: -${BLEED_PX}px !important;
+      margin-top: -${BLEED_PX}px !important;
+      margin-bottom: -${BLEED_PX}px !important;
+      max-width: none !important;
+      max-height: none !important;
+      overflow: hidden !important;
+    }
+
+    .print-slide .full-bleed img,
+    .print-slide .img-full img,
+    .print-slide .img-backdrop img,
+    .print-slide .spread-image img,
+    .print-slide .img img {
+      transform: scale(${IMAGE_SCALE}) !important;
+      transform-origin: center center !important;
+      image-rendering: auto !important;
+    }
+  `;
+}
+
+async function preparePrintableDeck(page) {
+  await page.addStyleTag({ content: createExportStyles() });
+  await page.evaluate(({ bleedPx, slideWidth, slideHeight }) => {
+    const slides = Array.from(document.querySelectorAll('.slide'));
+    const exportRoot = document.createElement('div');
+
+    exportRoot.id = 'print-export-root';
+
+    for (const slide of slides) {
+      const wrapper = document.createElement('section');
+      wrapper.className = 'print-page';
+      slide.classList.add('print-slide', 'active');
+      slide.style.width = `${slideWidth}px`;
+      slide.style.height = `${slideHeight}px`;
+      slide.style.left = `${bleedPx}px`;
+      slide.style.top = `${bleedPx}px`;
+      wrapper.appendChild(slide);
+      exportRoot.appendChild(wrapper);
+    }
+
+    document.body.replaceChildren(exportRoot);
+    document.documentElement.style.overflow = 'visible';
+    document.body.style.overflow = 'visible';
+  }, {
+    bleedPx: BLEED_PX,
+    slideWidth: SLIDE_W_PX,
+    slideHeight: SLIDE_H_PX,
+  });
+}
+
+function drawCropMarks(page) {
+  const leftTrim = CROP_PT + BLEED_PT;
+  const rightTrim = leftTrim + TRIM_W_PT;
+  const bottomTrim = CROP_PT + BLEED_PT;
+  const topTrim = bottomTrim + TRIM_H_PT;
+  const markColor = cmyk(0, 0, 0, 1);
+
+  const lines = [
+    { start: { x: leftTrim - CROP_PT, y: topTrim }, end: { x: leftTrim, y: topTrim } },
+    { start: { x: leftTrim, y: topTrim }, end: { x: leftTrim, y: topTrim + CROP_PT } },
+    { start: { x: rightTrim, y: topTrim }, end: { x: rightTrim + CROP_PT, y: topTrim } },
+    { start: { x: rightTrim, y: topTrim }, end: { x: rightTrim, y: topTrim + CROP_PT } },
+    { start: { x: leftTrim - CROP_PT, y: bottomTrim }, end: { x: leftTrim, y: bottomTrim } },
+    { start: { x: leftTrim, y: bottomTrim - CROP_PT }, end: { x: leftTrim, y: bottomTrim } },
+    { start: { x: rightTrim, y: bottomTrim }, end: { x: rightTrim + CROP_PT, y: bottomTrim } },
+    { start: { x: rightTrim, y: bottomTrim - CROP_PT }, end: { x: rightTrim, y: bottomTrim } },
+  ];
+
+  for (const line of lines) {
+    page.drawLine({
+      start: line.start,
+      end: line.end,
+      thickness: LINE_WIDTH_PT,
+      color: markColor,
+    });
+  }
+}
+
+async function buildFinalPdf(tempPdfPath, outputPath) {
+  const sourceBytes = readFileSync(tempPdfPath);
+  const sourceDoc = await PDFDocument.load(sourceBytes);
+  const finalDoc = await PDFDocument.create();
+  const sourcePages = sourceDoc.getPages();
+  const embeddedPages = await finalDoc.embedPages(sourcePages);
+
+  for (const embeddedPage of embeddedPages) {
+    const page = finalDoc.addPage([MEDIA_W_PT, MEDIA_H_PT]);
+
+    page.drawPage(embeddedPage, {
+      x: CROP_PT,
+      y: CROP_PT,
+      width: BLEED_W_PT,
+      height: BLEED_H_PT,
+    });
+
+    page.setMediaBox(0, 0, MEDIA_W_PT, MEDIA_H_PT);
+    page.setBleedBox(CROP_PT, CROP_PT, BLEED_W_PT, BLEED_H_PT);
+    page.setTrimBox(CROP_PT + BLEED_PT, CROP_PT + BLEED_PT, TRIM_W_PT, TRIM_H_PT);
+    drawCropMarks(page);
+  }
+
+  const finalBytes = await finalDoc.save();
+  writeFileSync(outputPath, finalBytes);
+}
+
+async function renderBleedPdf(fileUrl, tempPdfPath) {
+  const browser = await chromium.launch({ headless: true });
+
+  try {
+    const page = await browser.newPage({
+      viewport: { width: SLIDE_W_PX, height: SLIDE_H_PX },
+    });
+
+    await page.emulateMedia({ media: 'screen' });
+    await page.goto(fileUrl, { waitUntil: 'networkidle', timeout: 30000 });
+    await page.waitForSelector('.slide', { timeout: 10000 });
+    await page.evaluate(() => document.fonts?.ready ?? Promise.resolve());
+    await preparePrintableDeck(page);
+    await page.evaluate(() => document.fonts?.ready ?? Promise.resolve());
+
+    const slideCount = await page.evaluate(() => document.querySelectorAll('.print-page').length);
+
+    await page.pdf({
+      path: tempPdfPath,
+      width: formatInches(BLEED_W_IN),
+      height: formatInches(BLEED_H_IN),
+      printBackground: true,
+      margin: { top: 0, right: 0, bottom: 0, left: 0 },
+      preferCSSPageSize: true,
+      scale: 1,
+    });
+
+    return slideCount;
+  } finally {
+    await browser.close();
+  }
+}
 
 async function main() {
   const htmlPath = process.argv[2];
+
   if (!htmlPath || !existsSync(htmlPath)) {
     console.error('Usage: node scripts/export-print-pdf.mjs <path/to/index.html>');
     process.exit(1);
   }
 
   const absPath = resolve(htmlPath);
-  const fileUrl = `file://${absPath}`;
-  const outputPath = absPath.replace(/\.html?$/i, '.print.pdf');
+  const fileUrl = toFileUrl(absPath);
+  const outputPath = toPrintOutputPath(absPath);
+  const tempDir = mkdtempSync(join(tmpdir(), 'folio-print-pdf-'));
+  const tempPdfPath = join(tempDir, 'bleed.pdf');
 
-  console.log('[1/4] Launching browser...');
-  const browser = await chromium.launch({ headless: true });
-  const context = await browser.newContext({
-    viewport: { width: SLIDE_W, height: SLIDE_H },
-    deviceScaleFactor: 2,
-  });
-  const page = await context.newPage();
-
-  console.log('[2/4] Loading deck...');
-  await page.goto(fileUrl, { waitUntil: 'networkidle', timeout: 30000 });
-  await page.waitForSelector('.slide', { timeout: 10000 });
-  await page.evaluate(async () => {
-    if (document.fonts?.ready) {
-      await document.fonts.ready;
-    }
-  });
-
-  const slideCount = await page.evaluate(() => {
-    const deck = document.getElementById('deck');
-    const slides = [...document.querySelectorAll('.slide')];
-
-    if (!deck || slides.length === 0) {
-      throw new Error('Deck or slides not found');
-    }
-
-    deck.style.transition = 'none';
-    deck.style.transform = 'translateX(0)';
-    deck.style.willChange = 'auto';
-
-    for (const slide of slides) {
-      slide.classList.add('active');
-      slide.style.opacity = '1';
-      slide.style.transform = 'none';
-      for (const animatedEl of slide.querySelectorAll('[data-anim]')) {
-        animatedEl.style.opacity = '1';
-        animatedEl.style.transform = 'none';
-      }
-    }
-
-    const nav = document.getElementById('nav');
-    if (nav) nav.style.display = 'none';
-
-    const progress = document.getElementById('progress');
-    if (progress) progress.style.display = 'none';
-
-    const overview = document.getElementById('overview');
-    if (overview) overview.style.display = 'none';
-
-    const shortcuts = document.getElementById('shortcuts');
-    if (shortcuts) shortcuts.style.display = 'none';
-
-    document.documentElement.style.overflow = 'hidden';
-    document.body.style.overflow = 'hidden';
-
-    return slides.length;
-  });
+  console.log('[1/4] Rendering bleed PDF...');
+  const slideCount = await renderBleedPdf(fileUrl, tempPdfPath);
   console.log(`  Found ${slideCount} slides`);
 
-  console.log('[3/4] Rendering slides and assembling print PDF...');
-  const pdfDoc = await PDFDocument.create();
-  pdfDoc.setTitle(`${basename(absPath, extname(absPath))} (print-ready)`);
-  pdfDoc.setProducer('Folio export-print-pdf.mjs');
-  pdfDoc.setCreator('pdf-lib + Playwright');
+  console.log('[2/4] Building print PDF...');
+  await buildFinalPdf(tempPdfPath, outputPath);
 
-  for (let index = 0; index < slideCount; index += 1) {
-    console.log(`  Rendering slide ${index + 1}/${slideCount}...`);
-    await page.evaluate(({ slideIndex, slideWidth }) => {
-      const deck = document.getElementById('deck');
-      if (!deck) {
-        throw new Error('Deck not found');
-      }
-
-      deck.style.transform = `translateX(-${slideIndex * slideWidth}px)`;
-      window.scrollTo(0, 0);
-    }, { slideIndex: index, slideWidth: SLIDE_W });
-
-    await page.waitForTimeout(50);
-
-    const imageBytes = await page.screenshot({
-      type: 'png',
-      fullPage: false,
-      animations: 'disabled',
-    });
-
-    const image = await pdfDoc.embedPng(imageBytes);
-    const pdfPage = pdfDoc.addPage([PAGE_W_PT, PAGE_H_PT]);
-
-    setPageBox(pdfDoc, pdfPage, 'MediaBox', 0, 0, PAGE_W_PT, PAGE_H_PT);
-    setPageBox(pdfDoc, pdfPage, 'CropBox', 0, 0, PAGE_W_PT, PAGE_H_PT);
-    setPageBox(pdfDoc, pdfPage, 'BleedBox', BLEED_X_PT, BLEED_Y_PT, BLEED_W_PT, BLEED_H_PT);
-    setPageBox(pdfDoc, pdfPage, 'TrimBox', TRIM_X_PT, TRIM_Y_PT, TRIM_W_PT, TRIM_H_PT);
-    setPageBox(pdfDoc, pdfPage, 'ArtBox', TRIM_X_PT, TRIM_Y_PT, TRIM_W_PT, TRIM_H_PT);
-
-    pdfPage.drawImage(image, {
-      x: BLEED_X_PT,
-      y: BLEED_Y_PT,
-      width: BLEED_W_PT,
-      height: BLEED_H_PT,
-    });
-
-    pdfPage.drawImage(image, {
-      x: TRIM_X_PT,
-      y: TRIM_Y_PT,
-      width: TRIM_W_PT,
-      height: TRIM_H_PT,
-    });
-
-    drawCropMarks(pdfPage);
+  console.log('[3/4] Cleaning up...');
+  if (existsSync(tempPdfPath)) {
+    unlinkSync(tempPdfPath);
   }
+  rmSync(tempDir, { recursive: true, force: true });
 
-  console.log('[4/4] Saving PDF...');
-  const pdfBytes = await pdfDoc.save({ useObjectStreams: false });
-  writeFileSync(outputPath, pdfBytes);
-
-  await browser.close();
-
-  console.log(`  ✅ Print PDF saved to: ${outputPath} (${slideCount} pages)`);
-  console.log('  Note: trim/bleed boxes and vector crop marks are included; CMYK/PDF/X-1a conversion remains a downstream prepress step.');
-}
-
-function setPageBox(pdfDoc, page, boxName, x, y, width, height) {
-  page.node.set(
-    PDFName.of(boxName),
-    pdfDoc.context.obj([x, y, x + width, y + height]),
-  );
-}
-
-function drawCropMarks(page) {
-  const color = grayscale(0);
-  const left = TRIM_X_PT;
-  const right = TRIM_X_PT + TRIM_W_PT;
-  const bottom = TRIM_Y_PT;
-  const top = TRIM_Y_PT + TRIM_H_PT;
-
-  const outerLeft = BLEED_X_PT;
-  const outerRight = BLEED_X_PT + BLEED_W_PT;
-  const outerBottom = BLEED_Y_PT;
-  const outerTop = BLEED_Y_PT + BLEED_H_PT;
-
-  const lines = [
-    [{ x: outerLeft - CROP_MARK_LENGTH_PT, y: top }, { x: outerLeft, y: top }],
-    [{ x: outerLeft - CROP_MARK_LENGTH_PT, y: bottom }, { x: outerLeft, y: bottom }],
-    [{ x: outerRight, y: top }, { x: outerRight + CROP_MARK_LENGTH_PT, y: top }],
-    [{ x: outerRight, y: bottom }, { x: outerRight + CROP_MARK_LENGTH_PT, y: bottom }],
-    [{ x: left, y: outerTop }, { x: left, y: outerTop + CROP_MARK_LENGTH_PT }],
-    [{ x: right, y: outerTop }, { x: right, y: outerTop + CROP_MARK_LENGTH_PT }],
-    [{ x: left, y: outerBottom - CROP_MARK_LENGTH_PT }, { x: left, y: outerBottom }],
-    [{ x: right, y: outerBottom - CROP_MARK_LENGTH_PT }, { x: right, y: outerBottom }],
-  ];
-
-  for (const [start, end] of lines) {
-    page.drawLine({
-      start,
-      end,
-      thickness: CROP_MARK_THICKNESS_PT,
-      color,
-    });
-  }
+  console.log('[4/4] Done');
+  console.log(`  PDF saved to: ${outputPath} (${slideCount} pages)`);
+  console.log(`  TrimBox: ${TRIM_W_PT}pt × ${TRIM_H_PT}pt`);
+  console.log(`  BleedBox: ${BLEED_W_PT.toFixed(3)}pt × ${BLEED_H_PT.toFixed(3)}pt`);
 }
 
 main().catch(err => {
-  console.error('Print export failed:', err);
+  console.error('Export failed:', err);
   process.exit(1);
 });

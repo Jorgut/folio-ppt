@@ -179,11 +179,17 @@ slide 结构 → IDML 文档映射：
 
 **当前状态**：Playwright 原生 PDF 导出已实现（`export-pdf.mjs`），文字矢量可选中，每页 16:9，支持直接导入 InDesign。
 
-**需增强**：
-- 裁切标记（crop marks）
-- 出血 3mm
+**新增出版级 PDF**（`export-print-pdf.mjs`）🎉：
+- 3mm 出血 — 内容延伸至裁切边界外 3mm
+- 裁切标记 — 四角 L 型注册线（0.5pt，cmyk 黑）
+- TrimBox / BleedBox — pdf-lib 后处理，InDesign 自动识别
+- 全出血图缩放 scale(1.04) 确保延伸到位
+- 矢量文字完全保留（Playwright 渲染 + pdf-lib 嵌入）
+
+**仍待增强**：
 - ICC 色彩管理（CMYK）
 - PDF/X-1a 标准
+- 专色支持
 
 适用于直接送印。
 
@@ -236,9 +242,9 @@ slide 结构 → IDML 文档映射：
 - **v0.5** — 模板大改：12 布局 / 8 主题 / WebGL + CSS 渐变 / 极端排版对比 ✓
 - **v0.6** — Phase 1a Native PPTX 引擎（全文字可编辑）+ Phase 1b 布局映射引擎 ✓
 - **v0.7** — Phase 1c 输出验证脚本 + 加伍磅真实项目验证 ✓
-- **v0.8** — Figma 导入 Plugin 可用
-- **v0.9** — 出版级 PDF（裁切标记 / CMYK / PDF/X-1a）
-- **v1.0** — Figma ↔ HTML 双向同步
+- **v0.8** — 出版级 PDF：3mm 出血 + 裁切标记 + TrimBox/BleedBox ✓
+- **v0.9** — Figma 导入 Plugin 可用
+- **v1.0** — Figma ↔ HTML 双向同步 / 出版级 PDF（CMYK/PDF-X）
 - **v2.0** — IDML / InDesign 原生支持
 - **v3.0** — 在线协同编辑 + 云端发布
 

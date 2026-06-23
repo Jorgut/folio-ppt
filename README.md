@@ -36,7 +36,7 @@
 | Native PPTX 引擎（全文字可编辑） | ✅ Phase 1a 完成 |
 | 布局映射引擎（12 种布局 mappers） | ✅ Phase 1b 完成 |
 | 输出验证脚本 | ✅ Phase 1c 完成 |
-| 出版级 PDF（裁切标记 / CMYK） | 🧪 测试中 |
+| 出版级 PDF（3mm 出血 + 裁切标记） | ✅ v0.8 |
 | 设计工作流（IA → Wireframe → Mockup） | 🧪 测试中 |
 
 ## 快速开始
@@ -60,7 +60,10 @@ node export-native-pptx.mjs 我的项目/ppt.html
 # 5. 输出验证
 node export-verify.mjs 我的项目/ppt.html
 
-# 6. 导出 PDF（文字可选中，InDesign 可用）
+# 6. 导出出版级 PDF（3mm 出血 + 裁切标记，可直接送印）
+node export-print-pdf.mjs 我的项目/ppt.html
+
+# 7. 导出常规 PDF（文字可选中，InDesign 可用）
 node export-pdf.mjs 我的项目/ppt.html
 ```
 

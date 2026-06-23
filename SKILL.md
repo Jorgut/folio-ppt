@@ -58,6 +58,7 @@ IA (信息架构) → Lo-fi Wireframe → Mid-fi → Hi-fi → HTML Mockup → N
 | `templates/wireframe-sheet.html` | 可打印的线框图纸（13 种布局 + 注释区）|
 | `scripts/export-native-pptx.mjs` | Native PPTX 导出（全文字可编辑）|
 | `scripts/layout-mapping.mjs` | 12 种布局映射引擎（PptxGenJS 原生 shape）|
+| `scripts/export-print-pdf.mjs` | 出版级 PDF 导出（3mm 出血 + 裁切标记）|
 | `scripts/export-verify.mjs` | 输出验证脚本（11 项检查）|
 
 ### 设计原则
