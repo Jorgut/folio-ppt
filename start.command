@@ -1,30 +1,33 @@
 #!/bin/bash
-# Folio · 启动 Opencode 继续工作
-# 双击此文件自动打开项目并恢复上下文
+# Folio · Design Intelligence Engine
+# 双击启动 Opencode，自动进入项目目录
 
 cd "$(dirname "$0")"
 
+clear
 echo ""
 echo "╔══════════════════════════════════════════════╗"
 echo "║  Folio · Design Intelligence Engine          ║"
 echo "║                                              ║"
-echo "║  启动 Opencode 中...                         ║"
+echo "║  最近：README 重写 / Wireframe 更新           ║"
+echo "║         Figma双模式 / IDML 文档               ║"
 echo "║                                              ║"
-echo "║  最近完成：                                   ║"
-echo "║  · README 中英双语重写                        ║"
-echo "║  · Wireframe 模板更新（13→17 布局）           ║"
-echo "║  · Figma C2D + 本地双模式说明                  ║"
-echo "║  · IDML/InDesign 导出文档                     ║"
+echo "║  待办：优化"开始项目"引导流程                  ║
+echo "║         评估 Design Engine 架构重构           ║"
 echo "║                                              ║"
-echo "║  待办：                                       ║"
-echo "║  · 优化"开始项目"的用户引导流程               ║"
-echo "║  · 评估 Design Intelligence Engine 架构重构    ║"
-echo "║                                              ║"
-echo "║  上下文文件：HANDOFF.md                       ║"
+echo "║  Opencode 启动中...                          ║"
 echo "╚══════════════════════════════════════════════╝"
 echo ""
+echo "> 上下文已保存至 HANDOFF.md"
+echo "> 在新会话中粘贴该文件内容即可继续"
+echo ""
 
-open HANDOFF.md
+cat HANDOFF.md
 
-# 启动 opencode
-opencode
+echo ""
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo "  Opencode 启动中... 请稍候"
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo ""
+
+exec opencode
