@@ -15,6 +15,7 @@
 ![PPTX](https://img.shields.io/badge/PPTX-Editable-2EA44F?style=flat-square)
 ![PDF](https://img.shields.io/badge/PDF-Print%20Ready-DC143C?style=flat-square)
 ![Figma](https://img.shields.io/badge/Figma-Pixel%20Perfect-A259FF?style=flat-square)
+![IDML](https://img.shields.io/badge/IDML-InDesign%20Native-F6AB0A?style=flat-square)
 ![Claude Code](https://img.shields.io/badge/Claude%20Code-Compatible-6B5B95?style=flat-square)
 ![OpenClaw](https://img.shields.io/badge/OpenClaw-Compatible-222222?style=flat-square)
 ![Open Code](https://img.shields.io/badge/Open%20Code-Compatible-111111?style=flat-square)
@@ -39,7 +40,7 @@ Open Claude (or any AI with this Skill loaded) and say:
 The AI will walk through:
 1. **Content** — How many slides? What goes on each page? Any images?
 2. **Style** — Pick from 10 visual styles, or describe the feeling for a recommendation
-3. **Output** — HTML / PPTX / PDF / Figma
+3. **Output** — HTML / PPTX / PDF / Figma / IDML
 
 That's it. You get your deck.
 
@@ -149,6 +150,8 @@ No. Just tell the AI what you want. Templates, rendering, and export are automat
 | PPTX | Yes — any text in PowerPoint / Keynote |
 | PDF Print | No (print-ready), but re-export anytime |
 | Figma | Yes — all text and images in Frames |
+| IDML | Yes — fully editable in InDesign with paragraph/character styles |
+| InDesign PDF | Yes — selectable text, native PDF elements |
 
 ### What doesn't Folio do?
 
@@ -287,6 +290,7 @@ MIT · Copyright (c) 2026 Jorgut
 ![PPTX](https://img.shields.io/badge/PPTX-%E5%8F%AF%E7%BC%96%E8%BE%91-2EA44F?style=flat-square)
 ![PDF](https://img.shields.io/badge/PDF-%E5%8D%B0%E5%88%B7%E7%BA%A7-DC143C?style=flat-square)
 ![Figma](https://img.shields.io/badge/Figma-%E5%83%8F%E7%B4%A0%E7%BA%A7%E8%BF%98%E5%8E%9F-A259FF?style=flat-square)
+![IDML](https://img.shields.io/badge/IDML-InDesign%20Native-F6AB0A?style=flat-square)
 ![Claude Code](https://img.shields.io/badge/Claude%20Code-%E5%85%BC%E5%AE%B9-6B5B95?style=flat-square)
 ![OpenClaw](https://img.shields.io/badge/OpenClaw-%E5%85%BC%E5%AE%B9-222222?style=flat-square)
 ![Open Code](https://img.shields.io/badge/Open%20Code-%E5%85%BC%E5%AE%B9-111111?style=flat-square)
@@ -311,7 +315,7 @@ MIT · Copyright (c) 2026 Jorgut
 AI 会依次确认：
 1. **内容** — 几张 slide？每页写什么？有图吗？
 2. **风格** — 从 10 套风格中选一个（或你描述感觉，AI 推荐）
-3. **导出格式** — HTML / PPTX / PDF / Figma
+3. **导出格式** — HTML / PPTX / PDF / Figma / IDML
 
 然后你拿到成品。
 
@@ -422,6 +426,8 @@ node scripts/export-indesign.mjs 项目路径/index.html
 | PPTX | PowerPoint / Keynote 里任意编辑文字 |
 | PDF 印刷 | 印刷品，改不了（但可以重新导出） |
 | Figma | Frame 里所有文字和图片都可编辑 |
+| IDML | InDesign 里完全可编辑，带段落/字符样式 |
+| InDesign PDF | 文字可选，原生 PDF 元素 |
 
 ### 不支持什么？
 
