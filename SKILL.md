@@ -57,18 +57,37 @@ mkdir -p 项目/images
 |------|------|
 | PPTX（推荐，文字可编辑） | `node <SKILL_ROOT>/scripts/export-native-pptx.mjs index.html` |
 | PDF 印刷 | `node <SKILL_ROOT>/scripts/export-print-pdf.mjs index.html` |
-| **Figma**（文字可编辑，可导入 Figma） | `node <SKILL_ROOT>/scripts/export-figma.mjs index.html` |
+| **Figma**（双模式：C2D 云API / 本地插件） | `node <SKILL_ROOT>/scripts/export-figma.mjs index.html` |
 | IDML（InDesign 原生导入） | `node <SKILL_ROOT>/scripts/export-idml.mjs index.html` |
 | 验证 | `node <SKILL_ROOT>/scripts/export-verify.mjs index.html` |
 
-### Figma 导入
+### Figma 导出
 
-1. `node scripts/export-figma.mjs index.html` → 生成 `index.figma.json`
+**自动模式（推荐）：**
+```bash
+node scripts/export-figma.mjs index.html
+```
+→ 有 `C2D_API_KEY` 则用 Code.to.Design（高 fidelity，剪贴板粘贴）
+→ 无 key 则用本地插件模式
+
+**手动指定模式：**
+```bash
+node scripts/export-figma.mjs --mode c2d index.html    # 强制云 API
+node scripts/export-figma.mjs --mode local index.html   # 强制本地插件
+```
+
+#### 本地插件模式（免费）
+1. `node scripts/export-figma.mjs --mode local index.html` → 生成 `index.figma.json` + `figma-plugin/`
 2. Figma 中：Plugins → Development → Import plugin from manifest… → 选择 `figma-plugin/manifest.json`
-3. 再次 Plugins → Folio Importer → 选择 `index.figma.json` → Import
-4. 自动生成 16 页，每页一个 Frame + 文字图层 + 图片
+3. **Figma Design** 中运行：Plugins → Folio Importer → 选择 `index.figma.json` → Import
+4. **Figma Slides** 中运行：打开 Slides 文件 → 同样运行 Folio Importer → 自动创建 Slide 节点（1920×1080）
 
-> 首次使用需要注册插件（一次性）。后续只需步骤 1 + 3。
+#### Code.to.Design 模式（高 fidelity）
+1. 配置环境变量：`export C2D_API_KEY="你的key"`
+2. `node scripts/export-figma.mjs --mode c2d index.html`
+3. 自动打开浏览器 Paste Helper → 复制到剪贴板 → Figma 粘贴
+
+> 首次使用本地模式需要注册插件（一次性）。C2D 模式首次运行会自动引导获取 API Key。
 
 ## 文件索引
 

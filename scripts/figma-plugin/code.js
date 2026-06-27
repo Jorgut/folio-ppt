@@ -1,7 +1,7 @@
 figma.showUI(__html__, { width: 420, height: 320 });
 
 function hexToRgb(hex) {
-  const h = hex.replace('#', '');
+  var h = hex.replace('#', '');
   return {
     r: parseInt(h.slice(0, 2), 16) / 255,
     g: parseInt(h.slice(2, 4), 16) / 255,
@@ -12,15 +12,17 @@ function hexToRgb(hex) {
 async function resolveFont(family) {
   if (!family) return { family: 'Inter', style: 'Regular' };
   var fl = family.toLowerCase();
-  const available = await figma.listAvailableFontsAsync();
-  for (var fi = 0; fi < available.length; fi++) {
-    var f = available[fi];
+  var available = await figma.listAvailableFontsAsync();
+  // Exact match
+  for (var i = 0; i < available.length; i++) {
+    var f = available[i];
     if (f.fontFamily && f.fontFamily.toLowerCase() === fl) {
       return { family: f.fontFamily, style: 'Regular' };
     }
   }
-  for (var fi = 0; fi < available.length; fi++) {
-    var f = available[fi];
+  // Partial match
+  for (var i = 0; i < available.length; i++) {
+    var f = available[i];
     if (f.fontFamily && (f.fontFamily.toLowerCase().indexOf(fl) >= 0 || fl.indexOf(f.fontFamily.toLowerCase()) >= 0)) {
       return { family: f.fontFamily, style: 'Regular' };
     }
@@ -51,6 +53,10 @@ figma.ui.onmessage = async function(msg) {
       var imgOk = 0;
       var imgFail = 0;
 
+      // Figma Slides: 1920x1080 fixed, scale from 1280x720
+      var isSlides = figma.editorType === 'slides';
+      var scale = isSlides ? 1920 / 1280 : 1;
+
       for (var si = 0; si < data.slides.length; si++) {
         var slide = data.slides[si];
         var slideNum = slide.index + 1;
@@ -61,25 +67,43 @@ figma.ui.onmessage = async function(msg) {
           total: total,
         });
 
-        var page = figma.createPage();
-        page.name = 'Slide ' + slideNum;
-        figma.root.appendChild(page);
+        var parentNode;
 
-        var frame = figma.createFrame();
-        frame.name = 'Slide ' + slideNum + ' BG';
-        frame.x = 0;
-        frame.y = 0;
-        frame.resize(data.slideWidth || 1280, data.slideHeight || 720);
-        frame.clipsContent = false;
-        frame.fills = [{ type: 'SOLID', color: { r: 0.9, g: 0.9, b: 0.9 } }];
+        if (isSlides) {
+          // ── Figma Slides ──
+          var slideNode = figma.createSlide();
+          slideNode.name = 'Slide ' + slideNum;
 
-        if (slide.bgColor && slide.bgColor !== 'FFFFFF') {
-          var rgb = hexToRgb(slide.bgColor);
-          frame.fills = [{ type: 'SOLID', color: { r: rgb.r, g: rgb.g, b: rgb.b } }];
+          // Set background
+          if (slide.bgColor && slide.bgColor !== 'FFFFFF') {
+            var rgb = hexToRgb(slide.bgColor);
+            slideNode.fills = [{ type: 'SOLID', color: { r: rgb.r, g: rgb.g, b: rgb.b } }];
+          }
+          parentNode = slideNode;
+        } else {
+          // ── Figma Design ──
+          var page = figma.createPage();
+          page.name = 'Slide ' + slideNum;
+          figma.root.appendChild(page);
+
+          var frame = figma.createFrame();
+          frame.name = 'Slide ' + slideNum;
+          frame.x = 0;
+          frame.y = 0;
+          frame.resize(data.slideWidth || 1280, data.slideHeight || 720);
+          frame.clipsContent = true;
+          frame.fills = [{ type: 'SOLID', color: { r: 0.9, g: 0.9, b: 0.9 } }];
+
+          if (slide.bgColor && slide.bgColor !== 'FFFFFF') {
+            var rgb = hexToRgb(slide.bgColor);
+            frame.fills = [{ type: 'SOLID', color: { r: rgb.r, g: rgb.g, b: rgb.b } }];
+          }
+
+          page.appendChild(frame);
+          parentNode = frame;
         }
 
-        page.appendChild(frame);
-
+        // ── Images ──
         for (var ii = 0; ii < (slide.images || []).length; ii++) {
           var img = slide.images[ii];
           if (!img.data) continue;
@@ -91,22 +115,25 @@ figma.ui.onmessage = async function(msg) {
             }
             var image = figma.createImage(bytes);
             var rect = figma.createRectangle();
-            rect.x = img.rect.x;
-            rect.y = img.rect.y;
-            rect.resize(Math.max(img.rect.width, 1), Math.max(img.rect.height, 1));
+            rect.x = Math.round(img.rect.x * scale);
+            rect.y = Math.round(img.rect.y * scale);
+            rect.resize(
+              Math.max(Math.round(img.rect.width * scale), 1),
+              Math.max(Math.round(img.rect.height * scale), 1)
+            );
             rect.fills = [{
               type: 'IMAGE',
               scaleMode: 'FILL',
               imageHash: image.hash,
             }];
-            frame.appendChild(rect);
+            parentNode.appendChild(rect);
             imgOk++;
           } catch (err) {
             imgFail++;
-            figma.notify('Image error: ' + err.message);
           }
         }
 
+        // ── Texts ──
         for (var ti = 0; ti < slide.texts.length; ti++) {
           var t = slide.texts[ti];
           try {
@@ -128,13 +155,16 @@ figma.ui.onmessage = async function(msg) {
             text.characters = ' ';
             text.fontName = { family: fontInfo.family, style: fontInfo.style };
             text.characters = t.text;
-            text.fontSize = t.style.fontSize;
-            text.x = t.rect.x;
-            text.y = t.rect.y;
-            text.resize(Math.max(t.rect.width, 1), Math.max(t.rect.height, 1));
+            text.fontSize = t.style.fontSize * scale;
+            text.x = Math.round(t.rect.x * scale);
+            text.y = Math.round(t.rect.y * scale);
+            text.resize(
+              Math.max(Math.round(t.rect.width * scale), 1),
+              Math.max(Math.round(t.rect.height * scale), 1)
+            );
 
             if (t.style.lineHeight) {
-              text.lineHeight = { value: t.style.lineHeight, unit: 'PIXELS' };
+              text.lineHeight = { value: t.style.lineHeight * scale, unit: 'PIXELS' };
             }
 
             var tc = hexToRgb(t.style.color);
@@ -143,16 +173,16 @@ figma.ui.onmessage = async function(msg) {
             var align = t.style.textAlign || 'LEFT';
             text.textAlignHorizontal = align.toUpperCase();
 
-            frame.appendChild(text);
+            parentNode.appendChild(text);
             textOk++;
           } catch (err) {
             textFail++;
-            figma.notify('Text error: ' + err.message);
           }
         }
       }
 
-      if (figma.root.children.length > 0) {
+      // Set first page as current in Design mode
+      if (!isSlides && figma.root.children.length > 0) {
         figma.currentPage = figma.root.children[0];
       }
 
