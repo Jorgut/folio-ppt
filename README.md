@@ -1,8 +1,12 @@
-# Folio · 杂志风 PPT
+# Folio · Presentation Design Intelligence Engine
 
 > 由 Jorgut 创建 · MIT 协议开源
 
-**单文件 HTML** 横向翻页 PPT，杂志编辑式排版。支持一键导出 PPTX（Native 全文字可编辑）和 PDF（可导入 InDesign）。
+**从 Layout Engine 到 Design Intelligence Engine。** Folio 不只是排版模板——它是一个能根据用户目标、受众和场景自动决策设计方案的智能系统。
+
+```
+User Prompt → Decision Engine → Visual Style → Engines → HTML / PPTX / PDF
+```
 
 <p align="center">
   <img src="assets/screenshots/slide-cover.png" width="45%" alt="Cover 布局">
@@ -11,60 +15,94 @@
 
 ---
 
-> ⚠️ **项目状态：测试阶段**
+> ⚠️ **项目状态：积极开发中**
 >
-> Folio 目前处于**技术验证和测试阶段**，尚未正式发布。所有功能、API 和工作流都可能在后续版本中发生重大变更。
+> Folio 目前处于**积极开发阶段**，核心架构正在从 Layout Engine 进化为 Design Intelligence Engine。
 >
-> - 当前版本：v0.8
-> - 最后更新：2026-06-23
+> - 当前版本：v0.9 (Design Intelligence)
+> - 最后更新：2026-06-27
 > - 稳定性：实验性
-> - 贡献：欢迎反馈和建议，但暂不接受 PR（核心架构尚未定型）
+> - 贡献：欢迎反馈和建议
 >
 > 如果你在使用过程中遇到问题或有改进建议，请在 [Issues](https://github.com/Jorgut/folio-ppt/issues) 中反馈。
 
 ---
 
+## 架构
+
+```
+folio/
+├── SKILL.md                      ← 设计决策入口
+├── index.html                    ← 主模板（16 种布局 + 交互系统）
+├── engines/                      ← 7 引擎知识库
+│   ├── layout-engine.md          ← 布局选择与组合规则
+│   ├── typography-engine.md      ← 字体系统与配对矩阵
+│   ├── color-engine.md           ← 配色系统与 8 主题色板
+│   ├── interaction-engine.md     ← L0-L4 交互层级
+│   ├── animation-engine.md       ← 动效方案与缓动速查
+│   ├── visual-effects-engine.md  ← 视觉特效（Glass/Aurora/Noise...）
+│   └── export-engine.md          ← 输出格式选择
+├── design-intelligence/
+│   ├── decision-engine.md        ← 5 步设计决策流程
+│   ├── visual-styles/            ← 10 种视觉风格定义
+│   ├── interaction-patterns/     ← 6 类交互模式库
+│   └── knowledge-base/           ← Gestalt/UX Laws/Accessibility
+├── scripts/
+│   ├── design-decision.mjs       ← 交互式决策 CLI（新增）
+│   ├── generate-theme.mjs        ← 引擎→代码联动生成器（新增）
+│   ├── export-native-pptx.mjs    ← Native PPTX 导出
+│   ├── export-print-pdf.mjs      ← 出版级 PDF 导出
+│   └── export-verify.mjs         ← 输出验证
+├── references/                   ← 设计参考文件
+└── templates/                    ← 线框图模板
+```
+
 ## 核心特性
 
 | 特性 | 状态 |
 |------|------|
-| 杂志级排版（12 种布局） | ✅ 稳定 |
+| Design Intelligence 决策引擎 | ✅ v0.9 |
+| 10 种视觉风格定义（Minimal/Editorial/Swiss/Glass...） | ✅ v0.9 |
+| 引擎→代码联动生成器 (`generate-theme.mjs`) | ✅ v0.9 |
+| 交互式决策 CLI (`design-decision.mjs`) | ✅ v0.9 |
+| 设计知识库（Gestalt/UX Laws/Accessibility） | ✅ v0.9 |
+| 杂志级排版（16 种布局） | ✅ 稳定 |
 | 响应式/自适应设计 | ✅ 稳定 |
 | 交互式演示（快捷键、概览、全屏） | ✅ 稳定 |
-| PPTX 截图导出 | ✅ 稳定 |
-| PDF 导出（文字矢量可选中） | ✅ 稳定 |
 | Native PPTX 引擎（全文字可编辑） | ✅ Phase 1a 完成 |
 | 布局映射引擎（12 种布局 mappers） | ✅ Phase 1b 完成 |
-| 输出验证脚本 | ✅ Phase 1c 完成 |
 | 出版级 PDF（3mm 出血 + 裁切标记） | ✅ v0.8 |
-| 设计工作流（IA → Wireframe → Mockup） | 🧪 测试中 |
+| 8pt Grid 设计系统 + Fitts's Law 触控 | ✅ v0.9 |
 
 ## 快速开始
 
 ```bash
-# 1. 拷贝模板到项目
+# 1. 设计决策 — 先选风格再写代码
+node scripts/design-decision.mjs
+
+# 2. 生成主题代码（CSS + Fonts + Effects）
+node scripts/generate-theme.mjs editorial
+
+# 3. 拷贝模板到项目
 cp index.html 我的项目/ppt.html
 mkdir -p 我的项目/images
 
-# 2. 浏览器预览
+# 4. 浏览器预览
 open 我的项目/ppt.html
 
-# 3. 安装依赖（仅导出需要）
+# 5. 安装依赖（仅导出需要）
 cd scripts/
 npm install
 npx playwright install chromium
 
-# 4. 导出 PPTX（Native 全文字可编辑，带布局映射）
+# 6. 导出 PPTX（全文字可编辑，带布局映射）
 node export-native-pptx.mjs 我的项目/ppt.html
 
-# 5. 输出验证
+# 7. 输出验证
 node export-verify.mjs 我的项目/ppt.html
 
-# 6. 导出出版级 PDF（3mm 出血 + 裁切标记，可直接送印）
+# 8. 导出出版级 PDF（3mm 出血 + 裁切标记）
 node export-print-pdf.mjs 我的项目/ppt.html
-
-# 7. 导出常规 PDF（文字可选中，InDesign 可用）
-node export-pdf.mjs 我的项目/ppt.html
 ```
 
 ## 设计工作流
@@ -77,56 +115,45 @@ node export-pdf.mjs 我的项目/ppt.html
 </p>
 
 ```
-IA (信息架构) → Lo-fi Wireframe → Mid-fi → Hi-fi → HTML Mockup → Native Export
+Design Decision → IA → Wireframe → HTML Mockup → Native Export
 ```
-
-### 完整流程
 
 | 阶段 | 活动 | 产出 |
 |------|------|------|
-| **Phase A: IA** | 内容盘点、受众分析、叙事弧 | Deck Structure Document |
-| **Phase B: Lo-fi** | 方块 + 占位符，5-10 分钟/页 | 手绘或简单数字草图 |
-| **Phase C: Mid-fi** | Grid + 标注 + 内容层级 | 标注完整的线框图 |
-| **Phase D: Hi-fi** | 真实内容 + 精确间距 | 开发交接文档 |
-| **Phase E: HTML** | 用 Folio 模板实现 | index.html (mockup) |
-| **Phase F: Export** | Native PPTX / PDF | .pptx / .pdf |
+| **决策** | 项目类型 / 受众 / 风格 / 交互层级 | Design Parameters 代码块 |
+| **IA** | 内容盘点、叙事弧 | Deck Structure Document |
+| **Wireframe** | Lo-fi → Mid-fi → Hi-fi | 标注完整的线框图 |
+| **HTML** | 用 Folio 模板实现 | index.html (mockup) |
+| **Export** | Native PPTX / 出版 PDF | .pptx / .pdf |
 
 ### 参考文件
 
 | 文件 | 内容 |
 |------|------|
-| `references/presentation-design.md` | 编辑设计模式（NYT Magazine、Stripe Press、Monocle 等） |
-| `references/information-architecture.md` | IA 五阶段流程（适配演示文稿） |
-| `references/wireframing.md` | Lo-fi/Mid-fi/Hi-fi 线框图方法 |
-| `templates/wireframe-sheet.html` | 可打印线框图纸（13 种布局 + 注释区） |
+| `engines/layout-engine.md` | 16 种布局选择组合规则 |
+| `design-intelligence/visual-styles/` | 10 种风格完整定义 |
+| `design-intelligence/knowledge-base/` | Gestalt/UX Laws/Accessibility |
+| `references/presentation-design.md` | 编辑设计模式（NYT Magazine 等） |
+| `references/information-architecture.md` | IA 五阶段流程 |
+| `references/wireframing.md` | 线框图方法 |
+| `templates/wireframe-sheet.html` | 可打印线框图纸 |
 
-## 12 种杂志布局
+## 10 种视觉风格
 
-| # | 布局 | 用途 |
-|---|------|------|
-| 1 | **Cover** | 封面 — 居中或偏置大字 |
-| 2 | **Split 4-8 / 3-9 / 7-5** | 不对称图文分栏 |
-| 3 | **Overlap** | 全出血图 + 文字浮层 |
-| 4 | **Bleed Quote** | 全出血图 + 引语 |
-| 5 | **Editorial** | CSS 双栏正文 |
-| 6 | **Stats** | 数字大字报 |
-| 7 | **Gallery** | 图片画廊（auto-fill 自适应列数） |
-| 8 | **Closing** | 收束页 |
-| 9 | **Timeline** | 时间线 / 流程步骤 |
-| 10 | **Spread** | 左右全出血跨页图文 |
-| 11 | **Compare** | 并排对比（旧 vs 新 / A vs B） |
-| 12 | **List** | 编号列表 / 原则清单 |
+| 风格 | 语感 | 参考 |
+|------|------|------|
+| **Minimal** | 少即是多 | Apple, Muji |
+| **Editorial** | 杂志搬到屏幕 | NYT Magazine, Monocle |
+| **Swiss** | 网格与秩序 | 瑞士国际主义 |
+| **Architectural** | 空间与结构 | 建筑作品集 |
+| **Brutalism** | 粗犀牛排版 | 反设计 |
+| **Glass** | 未来感透明 | Apple Vision Pro |
+| **Dark** | 暗底发光 | GitHub Dark |
+| **Bento** | 井然有序的网格 | Dashboard |
+| **Luxury** | 昂贵感 | 高端品牌 |
+| **Cyberpunk** | 霓虹夜色 | 赛博朋克 |
 
-## 设计原则
-
-1. 不对称优于对称
-2. 图文重叠创造层次
-3. 全出血图呼吸感
-4. 字号对比 ≥ 6:1
-5. 留白是设计的一部分
-6. 三种字体各司其职（衬线/非衬线/等宽）
-7. 图片只用标准比例
-8. 一套 deck 一套主题色
+每种风格在 `design-intelligence/visual-styles/` 中有完整的字体/配色/动效/特效/布局定义。
 
 ## 交互式演示
 
@@ -140,6 +167,19 @@ IA (信息架构) → Lo-fi Wireframe → Mid-fi → Hi-fi → HTML Mockup → N
 | `B` | 低功耗模式 |
 | `?` | 快捷键面板 |
 | 🔗 按钮 | 复制当前页 URL |
+
+## 引擎→代码联动
+
+```bash
+# 生成 Editorial 风格的主题代码（CSS 变量 + 字体 + 特效）
+node scripts/generate-theme.mjs editorial
+
+# 输出所有 10 种风格
+node scripts/generate-theme.mjs all
+
+# 交互式 5 步设计决策
+node scripts/design-decision.mjs
+```
 
 ## 依赖
 
