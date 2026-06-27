@@ -1,12 +1,179 @@
+<p align="center">
+  <a href="#english">🇬🇧 English</a> · <a href="#chinese">🇨🇳 中文</a>
+</p>
+
+---
+
+<a id="english"></a>
+
 # Folio · Design Intelligence Engine
 
 > Magazine-style presentation engine. Structured content → template-driven layout → multi-format export.
 
 ```text
+You describe what you need → Folio determines style & structure → renders & exports → you get the deliverable
+```
+
+Single source, multiple outputs: **HTML Slides / PPTX / PDF / Figma**. No manual layout work.
+
+---
+
+## Quick Start
+
+Open Claude (or any AI with this Skill loaded) and say:
+
+> **"Use Folio to make a presentation about [your topic], export as HTML."**
+
+The AI will walk through:
+1. **Content** — How many slides? What goes on each page? Any images?
+2. **Style** — Pick from 10 visual styles, or describe the feeling for a recommendation
+3. **Output** — HTML / PPTX / PDF / Figma
+
+That's it. You get your deck.
+
+---
+
+## When to Use Folio
+
+| Scenario | Works well | Not for |
+|----------|------------|---------|
+| Portfolio / Project review | ✅ Magazine-grade layout, no design skills needed | |
+| Product launch / Pitch deck | ✅ Fast turnaround, consistent quality | |
+| Academic presentation | ✅ Clean, professional, PDF-ready | |
+| Figma design → presentation | ✅ C2D high-fidelity import | |
+| Content that changes often | ✅ Edit content without touching layout | |
+| Highly custom animations | | ❌ Not a frontend framework |
+| 50+ page documents | | ❌ Optimized for 6-20 slides |
+
+---
+
+## How It Works
+
+```text
+Your request
+    ↓
+Folio determines: platform → audience → style → interaction level
+    ↓
+Template selected → content filled → rendered
+    ↓
+┌─────────┬─────────┬─────────┬─────────┐
+│ HTML    │ PPTX    │ PDF     │ Figma   │
+│ Present │ Editable│ Print-  │ C2D     │
+│ directly│ text    │ ready   │ import  │
+└─────────┴─────────┴─────────┴─────────┘
+```
+
+Every step is AI-guided. No config files to touch.
+
+---
+
+## Output Formats
+
+| Format | Description | Best for |
+|--------|-------------|----------|
+| **HTML** | Browser-ready presentation with keyboard nav & transitions | Quick sharing, online viewing |
+| **PPTX** | Fully editable text in PowerPoint / Keynote / Google Slides | Client delivery, team editing |
+| **PDF Print** | 3mm bleed + crop marks, print-shop ready | Catalogues, brochures, print |
+| **Figma** | Pixel-perfect Frames, editable text and images | Design team handoff |
+
+---
+
+## 10 Visual Styles
+
+| Style | Vibe | Use case |
+|-------|------|----------|
+| **Minimal** | Less is more, Apple-like restraint | Product intro, personal site |
+| **Editorial** | Magazine cover typography | Content brands, narrative decks |
+| **Swiss** | Grid & order, International Typographic Style | Data presentation, corporate |
+| **Architectural** | Space, large whitespace | Architecture portfolio, spatial design |
+| **Brutalism** | Raw, bold, in-your-face | Creative work, experimental |
+| **Glass** | Frosted glass, futuristic | Tech products, Vision Pro style |
+| **Dark** | Dark background, luminous accents | Gaming, night mode, data dashboards |
+| **Bento** | Ordered module grid | Dashboards, feature panels |
+| **Luxury** | Refined, expensive feel | High-end brand, invitations |
+| **Cyberpunk** | Neon, cyberpunk aesthetic | Music festival, creative events |
+
+---
+
+## FAQ
+
+### Do I need to know how to code?
+
+No. Just tell the AI what you want. Templates, rendering, and export are automatic.
+
+### Can I edit the content after generation?
+
+| Format | Editable? |
+|--------|-----------|
+| HTML | Yes — edit text and images directly |
+| PPTX | Yes — any text in PowerPoint / Keynote |
+| PDF Print | No (print-ready), but re-export anytime |
+| Figma | Yes — all text and images in Frames |
+
+### What doesn't Folio do?
+
+- Not for 50+ page documents (optimized for 6-20 slides)
+- Not for complex custom animations
+- Not a real-time collaborative editor
+
+---
+
+## For Developers
+
+### Direct CLI usage
+
+```bash
+cd scripts && npm install
+
+# Preview
+open path/to/project/index.html
+
+# Export
+node export-figma.mjs path/to/project/index.html
+node export-native-pptx.mjs path/to/project/index.html
+```
+
+All export scripts: `scripts/export-*.mjs`
+
+### Project layout
+
+```
+folio/
+├── index.html          ← Master template (16 layouts)
+├── SKILL.md            ← AI instructions
+├── design/             ← Design system docs
+├── engines/            ← Decision engine rules
+├── scripts/            ← Export scripts + Figma plugin
+└── references/         ← Design references
+```
+
+### Dependencies
+
+```bash
+cd scripts
+npm install
+npx playwright install chromium
+```
+
+---
+
+## License
+
+MIT · Copyright (c) 2026 Jorgut
+
+---
+
+<a id="chinese"></a>
+
+# Folio · 设计智能引擎
+
+> 杂志级演示引擎。结构化内容 → 模板驱动排版 → 多格式导出。
+
+```text
 你说要做个什么 → Folio 确定风格和结构 → 渲染并导出 → 你拿到成品
 ```
 
-一次输出：HTML 演示 / PPTX / PDF / Figma。不需要手动排版。
+一次输出：**HTML 演示 / PPTX / PDF / Figma**。不需要手动排版。
 
 ---
 
@@ -64,9 +231,9 @@ Folio 确定：平台 → 受众 → 风格 → 交互层级
 | 格式 | 一句话 | 适合谁 |
 |------|--------|--------|
 | **HTML** | 浏览器打开就能演示，有快捷键和过渡动效 | 快速分享、线上展示 |
-| **PPTX** | 文字完全可编辑，在 PowerPoint / Keynote / Google Slides 里随便改 | 客户交付、团队协作 |
+| **PPTX** | 文字完全可编辑，PowerPoint / Keynote / Google Slides 随便改 | 客户交付、团队协作 |
 | **PDF 印刷** | 3mm 出血 + 裁切标记，直接发印刷厂 | 画册、手册、印刷品 |
-| **Figma** | 像素级还原到 Figma Frame，继续精修 | 设计团队接力 |
+| **Figma** | 像素级还原到 Frame，继续精修 | 设计团队接力 |
 
 ---
 
@@ -87,7 +254,7 @@ Folio 确定：平台 → 受众 → 风格 → 交互层级
 
 ---
 
-## 我知道你可能会问
+## 常见问题
 
 ### 我不会写代码，能用吗？
 
@@ -107,10 +274,6 @@ Folio 确定：平台 → 受众 → 风格 → 交互层级
 - 不支持 50+ 页的文档（排版引擎为 6-20 页优化）
 - 不支持复杂自定义动画（不是前端框架）
 - 不支持实时协作编辑（单次生成）
-
-### 和直接做 PPT 有什么区别？
-
-PPT 是"拖拽排版"，Folio 是"告诉 AI 你想要什么，它排好给你"。改内容不改排版，批量输出多格式。
 
 ---
 
@@ -143,10 +306,16 @@ folio/
 └── references/         ← 设计参考
 ```
 
-详细文件结构见 `SKILL.md`。
+### 依赖安装
+
+```bash
+cd scripts
+npm install
+npx playwright install chromium
+```
 
 ---
 
-## License
+## 许可证
 
 MIT · Copyright (c) 2026 Jorgut
