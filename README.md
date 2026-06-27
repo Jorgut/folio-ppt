@@ -87,6 +87,34 @@ Every step is AI-guided. No config files to touch.
 | **PPTX** | Fully editable text in PowerPoint / Keynote / Google Slides | Client delivery, team editing |
 | **PDF Print** | 3mm bleed + crop marks, print-shop ready | Catalogues, brochures, print |
 | **Figma** | Pixel-perfect Frames, editable text and images | Design team handoff |
+| **IDML** | InDesign native format, editable text with paragraph/character styles | Print publication, editorial layout |
+| **InDesign PDF** | Lightweight PDF with selectable text, native PDF elements (not PNG overlay) | InDesign placement, light preview |
+
+---
+
+## Output Format Details
+
+### InDesign / IDML
+
+Folio supports two InDesign-friendly workflows:
+
+**IDML (InDesign native format)**
+```bash
+node scripts/export-idml.mjs path/to/index.html
+```
+- Editable text frames with font/size/color/alignment preserved
+- 16 slides auto-built as pages, correct page order
+- Paragraph & character styles included
+- External image references (`index_images/` folder stays alongside)
+
+**InDesign PDF**
+```bash
+node scripts/export-indesign.mjs path/to/index.html
+```
+- Selectable text (not flattened)
+- Native PDF image elements (not PNG rasterized)
+- Small file size (~1.2MB)
+- Can be placed into InDesign as a reference layer
 
 ---
 
@@ -258,6 +286,35 @@ Folio 确定：平台 → 受众 → 风格 → 交互层级
 | **PPTX** | 文字完全可编辑，PowerPoint / Keynote / Google Slides 随便改 | 客户交付、团队协作 |
 | **PDF 印刷** | 3mm 出血 + 裁切标记，直接发印刷厂 | 画册、手册、印刷品 |
 | **Figma** | 像素级还原到 Frame，继续精修 | 设计团队接力 |
+| **IDML** | InDesign 原生格式，文字/样式完整保留 | 出版印刷、编辑排版 |
+| **InDesign PDF** | 轻量 PDF，文字可选，原生 PDF 元素（非 PNG 叠加） | InDesign 置入、轻量预览 |
+
+---
+
+## 输出格式详情
+
+### InDesign / IDML
+
+Folio 提供两种 InDesign 友好格式：
+
+**IDML（首选，原生导入）**
+```bash
+node scripts/export-idml.mjs 项目路径/index.html
+```
+- 文字进独立文本框，完全可编辑
+- 字体/字号/颜色/对齐保留
+- 16 页自动建好，页码正确排序
+- 支持段落样式和字符样式
+- 图片为外部引用（`index_images/` 文件夹需保持同目录）
+
+**InDesign PDF（备选，置入式）**
+```bash
+node scripts/export-indesign.mjs 项目路径/index.html
+```
+- 文字可选（非图片化）
+- 图片为原生 PDF 元素（非 PNG 覆盖）
+- 文件小（约 1.2MB）
+- 可拖入 InDesign 作为参考层
 
 ---
 
