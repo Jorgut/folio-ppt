@@ -30,9 +30,8 @@ You describe what you need → Folio generates the deck → export to any format
 Single source, multiple outputs: **HTML / PPTX / PDF / Figma / IDML**. Auto-generated layout, manually editable after export.
 
 <p align="center">
-  <img src="assets/screenshots/slide-cover.png" width="30%" alt="Cover slide preview" />
-  <img src="assets/screenshots/slide-editorial.png" width="30%" alt="Editorial slide preview" />
-  <img src="assets/screenshots/wireframe-sheet.png" width="30%" alt="Wireframe sheet preview" />
+  <img src="assets/screenshots/slide-cover.png" width="45%" alt="Cover slide preview" />
+  <img src="assets/screenshots/slide-editorial.png" width="45%" alt="Editorial slide preview" />
 </p>
 
 ---
@@ -132,6 +131,10 @@ Open `templates/wireframe-sheet.html` in your browser, then print or use it as a
 ```
 templates/wireframe-sheet.html
 ```
+
+<p align="center">
+  <img src="assets/screenshots/wireframe-sheet.png" width="80%" alt="Wireframe sheet preview" />
+</p>
 
 Each card represents a slide with:
 - Title / subtitle area
@@ -329,9 +332,8 @@ MIT · Copyright (c) 2026 Jorgut
 一次输出：**HTML / PPTX / PDF / Figma / IDML**。自动排版，导出后可手动精修。
 
 <p align="center">
-  <img src="assets/screenshots/slide-cover.png" width="30%" alt="封面幻灯片预览" />
-  <img src="assets/screenshots/slide-editorial.png" width="30%" alt="杂志风格幻灯片预览" />
-  <img src="assets/screenshots/wireframe-sheet.png" width="30%" alt="线框图预览" />
+  <img src="assets/screenshots/slide-cover.png" width="45%" alt="封面幻灯片预览" />
+  <img src="assets/screenshots/slide-editorial.png" width="45%" alt="杂志风格幻灯片预览" />
 </p>
 
 ---
@@ -432,6 +434,10 @@ node scripts/export-indesign.mjs 项目路径/index.html
 ```
 templates/wireframe-sheet.html
 ```
+
+<p align="center">
+  <img src="assets/screenshots/wireframe-sheet.png" width="80%" alt="线框图预览" />
+</p>
 
 每张卡片包含：
 - 标题 / 副标题区域
