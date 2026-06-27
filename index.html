@@ -48,27 +48,36 @@
   --lh-lead: 1.4;
   --lh-body: 1.7;
 
-  /* 间距系统 — 流体版 (相对视口宽度等比缩放) */
-  --sp-1:  clamp(2px,  0.31vw, 4px);
-  --sp-2:  clamp(4px,  0.62vw, 8px);
-  --sp-3:  clamp(8px,  0.94vw, 12px);
-  --sp-4:  clamp(12px, 1.25vw, 16px);
-  --sp-5:  clamp(14px, 1.56vw, 24px);
-  --sp-6:  clamp(18px, 2.08vw, 32px);
-  --sp-7:  clamp(22px, 2.6vw,  40px);
-  --sp-8:  clamp(26px, 3.12vw, 48px);
-  --sp-9:  clamp(30px, 4.16vw, 64px);
-  --sp-10: clamp(36px, 5.2vw,  80px);
-  --sp-11: clamp(42px, 6.25vw, 96px);
-  --sp-12: clamp(48px, 8.33vw, 128px);
+  /* 间距系统 — 8pt Grid (基点为 8 的倍数)
+     遵循 Material Design / HIG 间距规范：
+     小间距 8/12/16，段落间距 24，区块间距 32/40，大间距 48/64/80/96 */
+  --sp-1:  4px;    /* ½× — 微调 */
+  --sp-2:  8px;    /* 1× — 基础单元 */
+  --sp-3:  12px;   /* 1.5× — 内联间距 */
+  --sp-4:  16px;   /* 2× — 卡片内边距 */
+  --sp-5:  24px;   /* 3× — 段落间距 */
+  --sp-6:  32px;   /* 4× — 区块间距 */
+  --sp-7:  40px;   /* 5× — 大区块间距 */
+  --sp-8:  48px;   /* 6× — Section 间距 */
+  --sp-9:  56px;   /* 7× */
+  --sp-10: 64px;   /* 8× */
+  --sp-11: 80px;   /* 10× */
+  --sp-12: 96px;   /* 12× */
+  --sp-13: 128px;  /* 16× */
+
+  /* 间距工具类 (8pt Grid 命名) */
+  --space-xs: 8px;   --space-sm: 12px;  --space-md: 16px;
+  --space-lg: 24px;  --space-xl: 32px;  --space-2xl: 40px;
+  --space-3xl: 48px; --space-4xl: 64px; --space-5xl: 80px;
+  --space-6xl: 96px;
 
   /* 幻灯片尺寸 (16:9) — 仅做参考，实际由视口决定 */
   --slide-w: 100vw;
   --slide-h: 100vh;
 
-  /* 安全区 — 流体：小屏紧、大屏松 */
-  --safe-x: clamp(16px, 5vw, 96px);
-  --safe-y: clamp(12px, 4.44vh, 64px);
+  /* 安全区 — 8pt Grid 对齐：内边距为 8 的倍数 */
+  --safe-x: clamp(16px, 5vw, 96px);  /* 2×–12× 8pt */
+  --safe-y: clamp(16px, 4.44vh, 64px); /* 2×–8× 8pt */
 
   /* 过渡/动效 */
   --ease-out-expo: cubic-bezier(0.19, 1, 0.22, 1);
@@ -167,6 +176,49 @@
   --accent-dim: rgba(0, 136, 170, 0.15);
 }
 
+/* -------- 2a. 工具类 (Utility Classes) -------- */
+/* 颜色 */
+.accent { color: var(--accent); }
+.paper { color: var(--paper); }
+.ink { color: var(--ink); }
+.muted { color: var(--grey); }
+.bg-ink { background: var(--ink); }
+.bg-accent-dim { background: var(--accent-dim); }
+
+/* 布局 */
+.flex-col { display: flex; flex-direction: column; }
+.flex-grow { flex: 1; }
+.grid-rows-auto-1fr { display: grid; grid-template-rows: auto 1fr; }
+.align-center { align-items: center; }
+.justify-center { justify-content: center; }
+.text-center { text-align: center; }
+
+/* 间距 — 8pt Grid 缩写 (.mt-4 = margin-top: var(--sp-4)) */
+.mt-1 { margin-top: var(--sp-1); } .mt-2 { margin-top: var(--sp-2); }
+.mt-3 { margin-top: var(--sp-3); } .mt-4 { margin-top: var(--sp-4); }
+.mt-5 { margin-top: var(--sp-5); } .mt-6 { margin-top: var(--sp-6); }
+.mt-7 { margin-top: var(--sp-7); } .mt-8 { margin-top: var(--sp-8); }
+.mb-1 { margin-bottom: var(--sp-1); } .mb-2 { margin-bottom: var(--sp-2); }
+.mb-3 { margin-bottom: var(--sp-3); } .mb-4 { margin-bottom: var(--sp-4); }
+.mb-5 { margin-bottom: var(--sp-5); } .mb-6 { margin-bottom: var(--sp-6); }
+.mb-7 { margin-bottom: var(--sp-7); } .mb-8 { margin-bottom: var(--sp-8); }
+.mb-9 { margin-bottom: var(--sp-9); }
+.p-4 { padding: var(--sp-4); } .p-5 { padding: var(--sp-5); }
+.p-6 { padding: var(--sp-6); } .p-8 { padding: var(--sp-8); }
+.px-4 { padding-left: var(--sp-4); padding-right: var(--sp-4); }
+.px-5 { padding-left: var(--sp-5); padding-right: var(--sp-5); }
+.py-4 { padding-top: var(--sp-4); padding-bottom: var(--sp-4); }
+.py-5 { padding-top: var(--sp-5); padding-bottom: var(--sp-5); }
+
+/* 图片效果 */
+.brightness-50 { filter: brightness(0.5); }
+
+/* 文字 */
+.italic { font-style: italic; }
+.max-w-8ch { max-width: 8ch; }
+.max-w-34em { max-width: 34em; }
+.max-w-42em { max-width: 42em; }
+
 /* -------- 3. 基础重置 -------- */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 html, body { width: 100%; height: 100%; overflow: hidden; background: #222; }
@@ -230,6 +282,15 @@ body { font-family: var(--font-body); color: var(--ink); -webkit-font-smoothing:
 .grid-3  { grid-template-columns: 1fr 1fr 1fr; }
 .grid-4  { grid-template-columns: 1fr 1fr 1fr 1fr; }
 
+/* 12列 Column Grid (Bootstrap / Ant Design 规范) */
+.grid-12 { grid-template-columns: repeat(12, 1fr); }
+.col-span-1  { grid-column: span 1; }  .col-span-2  { grid-column: span 2; }
+.col-span-3  { grid-column: span 3; }  .col-span-4  { grid-column: span 4; }
+.col-span-5  { grid-column: span 5; }  .col-span-6  { grid-column: span 6; }
+.col-span-7  { grid-column: span 7; }  .col-span-8  { grid-column: span 8; }
+.col-span-9  { grid-column: span 9; }  .col-span-10 { grid-column: span 10; }
+.col-span-11 { grid-column: span 11; } .col-span-12 { grid-column: span 12; }
+
 /* 不对称 split */
 .split { display: grid; gap: var(--sp-7); }
 .split-3-9   { grid-template-columns: 3fr 9fr; }
@@ -245,13 +306,13 @@ body { font-family: var(--font-body); color: var(--ink); -webkit-font-smoothing:
 .display-1    { font-family: var(--font-display); font-size: var(--text-display); line-height: var(--lh-display); font-weight: 400; }
 .display-2    { font-family: var(--font-display); font-size: var(--text-title); line-height: var(--lh-display); font-weight: 400; }
 .title-zh     { font-family: var(--font-zh); font-size: var(--text-display); line-height: var(--lh-display); font-weight: 600; }
-.lead         { font-family: var(--font-body); font-size: var(--text-lead); line-height: var(--lh-lead); font-weight: 300; color: var(--grey); }
+.lead         { font-family: var(--font-body); font-size: var(--text-lead); line-height: var(--lh-lead); font-weight: 350; color: var(--ink); }
 .body         { font-family: var(--font-body); font-size: var(--text-body); line-height: var(--lh-body); font-weight: 400; color: var(--grey); }
 .caption      { font-family: var(--font-body); font-size: var(--text-caption); line-height: 1.4; font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em; color: var(--grey); }
 .meta         { font-family: var(--font-mono); font-size: var(--text-meta); line-height: 1.4; text-transform: uppercase; letter-spacing: 0.1em; color: var(--grey); }
 
-.slide.dark .lead  { color: rgba(255,255,255,0.6); }
-.slide.dark .body  { color: rgba(255,255,255,0.65); }
+.slide.dark .lead  { color: rgba(255,255,255,0.85); }
+.slide.dark .body  { color: rgba(255,255,255,0.55); }
 .slide.dark .caption { color: rgba(255,255,255,0.5); }
 
 /* 首字下沉 */
@@ -541,6 +602,168 @@ body { font-family: var(--font-body); color: var(--ink); -webkit-font-smoothing:
   margin-bottom: var(--sp-2);
 }
 
+/* Pattern 13: Section Divider */
+.layout-chapter {
+  place-items: center;
+  text-align: center;
+  background:
+    radial-gradient(circle at top, rgba(var(--accent-rgb), 0.16), transparent 42%),
+    linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0)),
+    var(--ink);
+}
+.layout-chapter .content {
+  display: grid;
+  gap: var(--sp-4);
+  align-content: center;
+  justify-items: center;
+}
+.layout-chapter .chapter-number {
+  color: rgba(255,255,255,0.92);
+  letter-spacing: -0.03em;
+}
+.layout-chapter .chapter-divider {
+  width: clamp(72px, 9vw, 140px);
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(var(--accent-rgb), 0.9), transparent);
+  position: relative;
+}
+.layout-chapter .chapter-divider::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--accent);
+  transform: translate(-50%, -50%);
+  box-shadow: 0 0 0 8px rgba(var(--accent-rgb), 0.12);
+}
+.layout-chapter .chapter-title,
+.layout-chapter .chapter-subtitle {
+  color: var(--paper);
+}
+.layout-chapter .chapter-subtitle {
+  max-width: 34ch;
+}
+
+/* Pattern 14: Data Table */
+.layout-table {
+  display: grid;
+  gap: var(--sp-6);
+}
+.layout-table .table-grid {
+  display: grid;
+  gap: 0;
+  border-top: 1px solid var(--ink-tint);
+  border-bottom: 1px solid var(--ink-tint);
+}
+.layout-table .table-head,
+.layout-table .table-row {
+  display: grid;
+  grid-template-columns: minmax(180px, 1.8fr) repeat(3, minmax(0, 1fr));
+  gap: var(--sp-4);
+  align-items: start;
+}
+.layout-table .table-head {
+  padding: var(--sp-4) 0;
+  border-bottom: 1px solid var(--ink-tint);
+}
+.layout-table .table-head .meta {
+  color: var(--accent);
+}
+.layout-table .table-row {
+  padding: var(--sp-5) 0;
+  border-bottom: 1px solid var(--ink-tint);
+}
+.layout-table .table-row:last-child {
+  border-bottom: none;
+}
+.layout-table .table-row:nth-child(even) {
+  background: var(--ink-tint);
+}
+.layout-table .table-label {
+  font-family: var(--font-display);
+  font-size: var(--text-title);
+  line-height: var(--lh-display);
+  font-weight: 600;
+  color: var(--ink);
+}
+.layout-table .table-value {
+  font-family: var(--font-body);
+  font-size: var(--text-body);
+  line-height: var(--lh-body);
+  color: var(--grey);
+}
+
+/* Pattern 15: Inset Image */
+.layout-inset .inset-header {
+  margin-bottom: var(--sp-6);
+  max-width: 44rem;
+}
+.layout-inset .inset-body {
+  font-size: var(--text-body);
+  line-height: var(--lh-body);
+  color: var(--grey);
+}
+.layout-inset .inset-figure {
+  float: right;
+  width: min(40%, 360px);
+  margin: 0 0 var(--sp-4) var(--sp-6);
+}
+.layout-inset .inset-figure .img {
+  box-shadow: 0 18px 40px rgba(0,0,0,0.12);
+}
+.layout-inset .inset-figure figcaption {
+  margin-top: var(--sp-3);
+}
+.layout-inset .inset-body p {
+  margin-bottom: var(--sp-4);
+}
+
+/* Pattern 16: Pull-quote in text */
+.layout-pullquote .pullquote-header {
+  margin-bottom: var(--sp-6);
+  max-width: 48rem;
+}
+.layout-pullquote .pullquote-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--sp-7);
+  align-items: start;
+}
+.layout-pullquote .pullquote-copy p {
+  margin-bottom: var(--sp-4);
+}
+.layout-pullquote .embedded-quote {
+  position: relative;
+  align-self: center;
+  padding: var(--sp-7) 0 var(--sp-6) var(--sp-6);
+  border-top: 1px solid var(--ink-tint);
+  border-bottom: 1px solid var(--ink-tint);
+}
+.layout-pullquote .embedded-quote::before {
+  content: '“';
+  position: absolute;
+  left: 0;
+  top: calc(-1 * var(--sp-2));
+  font-family: var(--font-display);
+  font-size: clamp(4rem, 8vw, 7rem);
+  line-height: 1;
+  color: var(--accent);
+  opacity: 0.9;
+}
+.layout-pullquote .embedded-quote .quote-text {
+  font-family: var(--font-display);
+  font-size: var(--text-title);
+  line-height: var(--lh-display);
+  font-style: italic;
+  color: var(--ink);
+}
+.layout-pullquote .embedded-quote .quote-attribution {
+  margin-top: var(--sp-4);
+}
+
 /* Fluid hero background */
 .bg-fluid {
   background: linear-gradient(135deg, var(--ink) 0%, var(--paper) 50%, var(--ink) 100%);
@@ -603,8 +826,68 @@ body.loaded #nav {
   white-space: nowrap;
 }
 #nav-copied.show { opacity: 1; }
+#nav-dots {
+  display: flex;
+  align-items: flex-end;
+  gap: 12px;
+}
+#nav .chapter-group {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+}
+#nav .chapter-label {
+  font-family: var(--font-mono);
+  font-size: 8px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.36);
+  white-space: nowrap;
+}
+#nav .chapter-dots {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+#nav .chapter-group + .chapter-group {
+  margin-left: 8px;
+}
+.nav-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 8px;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.08);
+  color: rgba(255,255,255,0.72);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  opacity: 0;
+  transform: translateY(4px);
+  pointer-events: none;
+  transition: opacity 220ms ease, transform 220ms ease;
+}
+body.auto-play .nav-status {
+  opacity: 1;
+  transform: translateY(0);
+}
 
-/* -------- 11. 交互式模式 (Overview / Presenter) -------- */
+/* -------- 11. 卡片系统 (Card Component) -------- */
+.card {
+  background: var(--paper); border-radius: 12px; overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+  transition: box-shadow 300ms, transform 300ms;
+}
+.card:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.08), 0 2px 4px rgba(0,0,0,0.04); }
+.card-img { width: 100%; aspect-ratio: 16/9; object-fit: cover; display: block; }
+.card-body { padding: var(--sp-4) var(--sp-5); }
+.card-body .card-title { font-family: var(--font-display); font-size: var(--text-title); line-height: var(--lh-display); margin-bottom: var(--sp-2); }
+.card-body .card-desc { font-size: var(--text-body); color: var(--grey); line-height: var(--lh-body); }
+
+/* -------- 12. 交互式模式 (Overview / Presenter) -------- */
 
 /* Grid overview 遮罩 */
 #overview {
@@ -658,6 +941,7 @@ body.loaded #nav {
   z-index: 60;
 }
 #shortcuts-toggle {
+  position: relative;
   background: rgba(18,18,18,0.7);
   backdrop-filter: blur(8px);
   color: rgba(255,255,255,0.5);
@@ -665,7 +949,15 @@ body.loaded #nav {
   padding: 6px 12px; border-radius: 16px;
   cursor: pointer; font-size: 11px;
   font-family: var(--font-mono);
+  /* Fitts's Law: 扩大点击区 */
 }
+#shortcuts-toggle::after {
+  content: ''; position: absolute; inset: -8px;
+}
+
+/* 导航按钮 Fitts's Law */
+.nav-btn { position: relative; }
+.nav-btn::after { content: ''; position: absolute; inset: -8px; }
 #shortcuts-panel {
   display: none;
   position: absolute; bottom: 36px; right: 0;
@@ -689,16 +981,27 @@ body.loaded #nav {
   color: white;
 }
 #nav .dot {
+  position: relative;
   width: 6px; height: 6px; border-radius: 50%;
   background: rgba(255,255,255,0.35);
   cursor: pointer; transition: all 300ms;
+  /* Fitts's Law: 扩大不可见点击区至 ≥44pt */
+}
+#nav .dot::after {
+  content: ''; position: absolute; inset: -19px;
+  border-radius: 50%;
 }
 #nav .dot.active { background: white; transform: scale(1.6); }
 #nav .dot:hover { background: rgba(255,255,255,0.6); }
 #nav .arrow {
+  position: relative;
   color: rgba(255,255,255,0.6); cursor: pointer;
   padding: 4px 8px; font-size: 14px; transition: color 200ms;
   font-family: var(--font-body);
+}
+/* Fitts's Law: arrow 点击区 ≥44pt */
+#nav .arrow::after {
+  content: ''; position: absolute; inset: -14px -8px;
 }
 #nav .arrow:hover { color: white; }
 #nav .page-nb {
@@ -709,10 +1012,21 @@ body.loaded #nav {
 
 /* -------- 11. 动效 -------- */
 .slide {
-  opacity: 0; transition: opacity 600ms var(--ease-out-expo);
+  opacity: 0;
+  transform: translateX(30px);
+  transition: opacity 500ms var(--ease-out-expo), transform 500ms var(--ease-out-expo);
 }
 .slide.active {
   opacity: 1;
+  transform: translateX(0);
+}
+.slide.incoming {
+  opacity: 0;
+  transform: translateX(30px);
+}
+.slide.exiting {
+  opacity: 0;
+  transform: translateX(-30px);
 }
 .slide [data-anim] {
   opacity: 0; transform: translateY(20px);
@@ -748,6 +1062,9 @@ body.loaded #nav {
 body.low-power .slide [data-anim],
 body.low-power .anim-scale { opacity: 1 !important; transform: none !important; animation: none !important; transition: none !important; }
 body.low-power #webgl-bg { display: none; }
+body.low-power .slide,
+body.low-power #lightbox,
+body.low-power .nav-status { transition: none !important; transform: none !important; }
 
 /* ============================================================
    13. ADAPTIVE + RESPONSIVE DESIGN
@@ -776,6 +1093,7 @@ body.low-power #webgl-bg { display: none; }
 .layout-gallery .img-gallery-item { overflow: hidden; position: relative; }
 .layout-gallery .img-gallery-item img {
   width: 100%; height: 100%; object-fit: cover;
+  cursor: zoom-in;
 }
 .layout-gallery .img-gallery-item .img-cap {
   position: absolute; bottom: var(--sp-2); left: var(--sp-3);
@@ -786,6 +1104,41 @@ body.low-power #webgl-bg { display: none; }
 /* 首图双倍宽 — 空间允许时生效 */
 .layout-gallery .img-gallery-item:first-child {
   grid-column: span 2; grid-row: span 2;
+}
+
+#lightbox {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(20px, 4vw, 48px);
+  background: rgba(0,0,0,0.9);
+  z-index: 300;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 300ms ease;
+}
+#lightbox.open {
+  opacity: 1;
+  pointer-events: auto;
+}
+#lightbox figure {
+  max-width: 90vw;
+  max-height: 90vh;
+  display: grid;
+  gap: var(--sp-4);
+  justify-items: center;
+}
+#lightbox img {
+  max-width: 90vw;
+  max-height: calc(90vh - 56px);
+  display: block;
+  box-shadow: 0 18px 60px rgba(0,0,0,0.45);
+}
+#lightbox figcaption {
+  color: rgba(255,255,255,0.72);
+  text-align: center;
 }
 
 /* ── 13b. LAYOUT BREAKPOINTS ───────────────────────────── */
@@ -864,6 +1217,42 @@ body.low-power #webgl-bg { display: none; }
     gap: var(--sp-4);
   }
 
+  .layout-table .table-head {
+    display: none;
+  }
+  .layout-table .table-row {
+    grid-template-columns: 1fr;
+    gap: var(--sp-3);
+    padding: var(--sp-4) 0;
+  }
+  .layout-table .table-value::before {
+    content: attr(data-label);
+    display: block;
+    margin-bottom: var(--sp-1);
+    font-family: var(--font-mono);
+    font-size: var(--text-meta);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+
+  .layout-inset .inset-figure {
+    float: none;
+    width: 100%;
+    margin: 0 0 var(--sp-5) 0;
+  }
+
+  .layout-pullquote .pullquote-grid {
+    grid-template-columns: 1fr;
+    gap: var(--sp-5);
+  }
+
+  .layout-chapter .chapter-subtitle,
+  .layout-pullquote .pullquote-header,
+  .layout-inset .inset-header {
+    max-width: 100%;
+  }
+
   /* overlay → 全宽透明浮层，嵌在 grid 内容区底部 */
   .layout-overlay .overlay-panel {
     position: relative; z-index: 2;
@@ -901,10 +1290,21 @@ body.low-power #webgl-bg { display: none; }
   /* 引用线 */
   .pull-quote { padding-left: var(--sp-3); }
 
-  /* 导航触屏友好 */
-  #nav { bottom: 16px; padding: 8px 12px; gap: 10px; }
+  /* 导航触屏友好 — 窄屏只保留箭头+页码 */
+  #nav { bottom: 16px; padding: 6px 10px; gap: 6px; max-width: calc(100vw - 32px); }
   #nav .dot { width: 10px; height: 10px; }
+  #nav #nav-dots { display: none; }
   #nav .arrow { padding: 8px 10px; font-size: 16px; }
+  #nav .chapter-label { display: none; }
+  #nav .nav-status { display: none; }
+  #nav .nav-btn { display: none; }
+
+  /* 快捷键面板 — 窄屏居中弹出 */
+  #shortcuts { bottom: auto; top: 16px; right: 16px; }
+  #shortcuts-panel {
+    bottom: auto; top: 40px; right: 0;
+    min-width: 180px; font-size: 11px; padding: 12px 16px;
+  }
 }
 
 /* ── 13c. ADAPTIVE — 触屏设备 ─────────────────────────── */
@@ -952,14 +1352,14 @@ body.low-power #webgl-bg { display: none; }
 /* ── 13g. ACCESSIBILITY — 减弱动效 ────────────────────── */
 @media (prefers-reduced-motion: reduce) {
   #deck { transition: none; }
-  .slide, .slide [data-anim] {
+  .slide, .slide [data-anim], #lightbox, .nav-status {
     opacity: 1 !important; transform: none !important;
     transition: none !important; animation: none !important;
   }
 }
 </style>
 </head>
-<body class="theme-sand">
+<body class="theme-indigo">
 
 <canvas id="webgl-bg" style="position:fixed;inset:0;z-index:-1;pointer-events:none;opacity:0.3;"></canvas>
 
@@ -967,242 +1367,331 @@ body.low-power #webgl-bg { display: none; }
 <div id="deck">
 
   <!-- --- Slide 1: Cover --- -->
-  <section class="slide active layout-cover dark" data-layout="cover">
+  <section class="slide active layout-cover dark" data-layout="cover" data-chapter="1">
     <div class="full-bleed bg-fluid" style="position:absolute;inset:0;z-index:0;">
-      <div style="width:100%;height:100%;background:linear-gradient(135deg, rgba(26,24,20,0.8) 0%, rgba(42,30,19,0.45) 50%, rgba(61,44,26,0.82) 100%);"></div>
+      <div style="width:100%;height:100%;background:linear-gradient(135deg, rgba(15,26,46,0.88) 0%, rgba(42,92,138,0.42) 50%, rgba(10,26,30,0.88) 100%);"></div>
     </div>
     <div class="content" style="position:relative;z-index:2;">
       <div>
-        <div class="meta anim-fade-scale" data-anim data-delay="1" style="margin-bottom:var(--sp-4);color:var(--accent);">Issue № 02</div>
-        <h1 class="display-hero anim-fade-scale" data-anim data-delay="2" style="color:var(--paper);">
-          新的工作<br>方式
-        </h1>
-        <p class="subtitle anim-fade-scale" data-anim data-delay="3">How We Work · 2026</p>
-        <p class="meta meta-line anim-fade-scale" data-anim data-delay="4">Folio · Issue № 02</p>
+        <div class="meta anim-fade-scale" data-anim data-delay="1" style="margin-bottom:var(--sp-4);color:var(--accent);">Issue № 03</div>
+        <h1 class="display-hero anim-fade-scale" data-anim data-delay="2" style="color:var(--paper);">设计前沿</h1>
+        <p class="subtitle anim-fade-scale" data-anim data-delay="3">Design Frontiers · 2026</p>
+        <p class="meta meta-line anim-fade-scale" data-anim data-delay="4">Folio · Survey Edition</p>
       </div>
     </div>
   </section>
 
   <!-- --- Slide 2: Asymmetric Split (Image Left, Text Right) --- -->
-  <section class="slide layout-split-image-text" data-layout="split-4-8">
-    <div class="content split-4-8" style="align-items:stretch;">
-      <div class="img r-4x3 h-full" data-anim data-delay="1">
+  <section class="slide layout-split-image-text" data-layout="split-4-8" data-chapter="1">
+    <div class="content split split-4-8" style="align-items:stretch;">
+      <div class="img h-full" data-anim data-delay="1">
         <img src="https://images.unsplash.com/photo-1497366216548-37526070297c?w=800&q=80" alt="Office">
       </div>
       <div class="text-panel" data-anim data-delay="2">
-        <div class="caption kicker" style="color:var(--accent);">The Shift</div>
-        <h2 class="display-1" style="margin-bottom:var(--sp-5);">从工具到<br>协作方式</h2>
-        <p class="lead" style="margin-bottom:var(--sp-4);">技术的进步不仅改变了我们使用的工具，更深刻地重塑了人与人之间的协作模式。</p>
-        <p class="body">当 AI 能够处理越来越多的工作流节点，人类的角色正在从"执行者"转向"策展人"。这不是一个渐进的演变，而是一个范式的转换。</p>
+        <div class="caption kicker accent">From Form to Systems</div>
+        <h2 class="display-1 mb-5">从形式到<br>系统</h2>
+        <p class="lead mb-4">当代设计不再停留在造型与风格，而是扩展到服务、规则、反馈与行为的整体编排。</p>
+        <p class="body">一个成功的界面、空间或品牌，不只是被“看见”，更是被持续体验、被团队复用、被系统放大。设计因此从表达手法，升级为组织复杂性的能力。</p>
       </div>
     </div>
   </section>
 
   <!-- --- Slide 3: Image + Text Overlap --- -->
-  <section class="slide layout-overlay" data-layout="overlap-right">
+  <section class="slide layout-overlay" data-layout="overlap-right" data-chapter="1">
     <div class="full-bleed img-backdrop" data-anim>
       <img src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=1200&q=80" alt="Team collaboration">
     </div>
     <div class="overlay-panel right" data-anim data-delay="2">
-      <div class="caption" style="color:var(--accent);margin-bottom:var(--sp-3);">Key Insight</div>
-      <h2 class="display-2" style="margin-bottom:var(--sp-4);">策展人的时代</h2>
-      <p class="lead">在信息过载的时代，最有价值的能力不是生产更多内容，而是做出更好的选择。</p>
+      <div class="caption accent mb-3">Systems Lens</div>
+      <h2 class="display-2 mb-4">系统思维</h2>
+      <p class="lead">优秀设计把单点解决方案连接成连续体验：从入口、路径到反馈，每一步都在塑造用户如何理解世界。</p>
     </div>
   </section>
 
   <!-- --- Slide 4: Full-Bleed Image + Quote --- -->
-  <section class="slide layout-bleed-quote" data-layout="bleed-quote">
+  <section class="slide layout-bleed-quote" data-layout="bleed-quote" data-chapter="2">
     <div class="full-bleed img-full" data-anim>
       <img src="https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=1400&q=80" alt="Workspace" style="filter:brightness(0.5);">
     </div>
     <div class="quote-block" data-anim data-delay="2">
-      <div class="pull-quote" style="font-style:italic;">
-        "The best way to predict the future is to invent it."
-      </div>
-      <p class="attribution meta" style="margin-top:var(--sp-5);">— Alan Kay</p>
+      <div class="pull-quote italic">"Design is intelligence made visible."</div>
+      <p class="attribution meta mt-5">— Alina Wheeler</p>
     </div>
   </section>
 
   <!-- --- Slide 5: Editorial Text (CSS Columns) --- -->
-  <section class="slide layout-editorial" data-layout="editorial">
+  <section class="slide layout-editorial" data-layout="editorial" data-chapter="2">
     <div class="content">
       <div class="article-header" data-anim>
-        <div class="caption" style="color:var(--accent);margin-bottom:var(--sp-3);">Essay</div>
-        <h2 class="display-1">重新定义<br>生产力</h2>
+        <div class="caption accent mb-3">Essay</div>
+        <h2 class="display-1">设计思维如何<br>穿过媒介</h2>
       </div>
       <div class="article-body body" data-anim data-delay="2">
-        <p class="dropcap">生产力的概念正在经历一场根本性的重构。在工业时代，生产力意味着在单位时间内生产更多的东西。但在知识工作领域，这个定义已经不再适用。</p>
-        <p>当我们审视那些真正产生突破性创新的团队时，会发现他们的共同点不是"做更多的事"，而是"做更少但更重要的事"。这种区别看似细微，实则代表了完全不同的思维方式。</p>
-        <p>AI 的介入进一步加速了这一转变。当机器能够处理重复性的认知劳动时，人类的独特价值转向了判断力、创造力和同理心——这些恰恰是难以量化的。</p>
-        <p>因此，新一代的生产力工具不应该只是帮我们更快地完成任务，而应该帮我们更好地决定做什么、以及为什么做。</p>
+        <p class="dropcap">今天的设计实践已经不再局限于屏幕、海报或空间本身。它更像一种穿透媒介的思维方式：用结构理解问题，用原型测试假设，用节奏组织复杂信息，让抽象愿景转化为可以感知、可以行动的现实。</p>
+        <p>这也是为什么越来越多的团队开始把设计语言嵌入策略、服务和运营。好的设计并不总是显眼；它往往隐藏在一次无摩擦的注册、一条清晰的动线、一次恰到好处的提醒，或一份让人迅速达成共识的提案里。</p>
+        <p>当技术持续提速，设计的重要性反而被放大。因为工具可以生成更多形式，但不能自动判断什么值得生成、什么需要被删去、什么应该被赋予情感重量。这些选择，仍然依赖人类对上下文、文化和细微差别的敏感。</p>
+        <p>设计前沿因此不只是“更美”，而是“更有判断力”。它让组织把注意力放回真正重要的问题：如何定义价值、如何建立信任、以及如何让变化变得可接受。</p>
       </div>
     </div>
   </section>
 
   <!-- --- Slide 6: Stats (Data Hero) --- -->
-  <section class="slide dark" data-layout="stats" style="background:#1a1814;">
+  <section class="slide dark" data-layout="stats" data-chapter="2" style="background:#1a1814;">
     <div class="content" style="display:flex;flex-direction:column;justify-content:center;">
       <div class="caption" data-anim style="color:var(--accent);margin-bottom:var(--sp-7);text-align:center;">The Numbers</div>
       <div class="layout-stats" data-anim data-delay="1">
         <div style="text-align:center;">
-          <div class="stat-nb anim-scale">73%</div>
-          <div class="stat-label">远程团队<br>效率提升</div>
+          <div class="stat-nb anim-scale">68%</div>
+          <div class="stat-label">设计团队将系统化组件<br>视为增长杠杆</div>
         </div>
         <div style="text-align:center;">
-          <div class="stat-nb anim-scale">2.4×</div>
-          <div class="stat-label">AI 辅助决策<br>准确率</div>
+          <div class="stat-nb anim-scale">3.1×</div>
+          <div class="stat-label">跨职能评审在可视化原型下<br>达成共识更快</div>
         </div>
         <div style="text-align:center;">
-          <div class="stat-nb anim-scale">89%</div>
-          <div class="stat-label">知识工作者<br>重新定义角色</div>
+          <div class="stat-nb anim-scale">82%</div>
+          <div class="stat-label">品牌更新项目把体验一致性<br>列为首要目标</div>
         </div>
       </div>
     </div>
   </section>
 
   <!-- --- Slide 7: Image Gallery --- -->
-  <section class="slide" data-layout="gallery">
+  <section class="slide" data-layout="gallery" data-chapter="2">
     <div class="content-v" style="display:grid;grid-template-rows:auto 1fr;gap:var(--sp-5);padding-top:var(--safe-y);">
       <div data-anim>
-        <div class="caption" style="color:var(--accent);">Gallery</div>
-        <h2 class="display-2">场景实录</h2>
+        <div class="caption accent">Gallery</div>
+        <h2 class="display-2">设计语汇</h2>
       </div>
       <div class="layout-gallery" style="flex:1;">
-        <div class="img-gallery-item img" data-anim data-delay="1"><img src="https://images.unsplash.com/photo-1600880292203-757bb62b4baf?w=600&q=80" alt="Meeting"><span class="img-cap">协作工作坊</span></div>
-        <div class="img-gallery-item img" data-anim data-delay="2"><img src="https://images.unsplash.com/photo-1553877522-43269d4ea984?w=600&q=80" alt="Strategy"><span class="img-cap">策略会</span></div>
-        <div class="img-gallery-item img" data-anim data-delay="3"><img src="https://images.unsplash.com/photo-1552664730-d307ca884978?w=600&q=80" alt="Planning"><span class="img-cap">规划中</span></div>
-        <div class="img-gallery-item img" data-anim data-delay="4"><img src="https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=600&q=80" alt="Team"><span class="img-cap">团队时刻</span></div>
-        <div class="img-gallery-item img" data-anim data-delay="5"><img src="https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=600&q=80" alt="Office"><span class="img-cap">办公空间</span></div>
+        <div class="img-gallery-item img" data-anim data-delay="1"><img src="https://images.unsplash.com/photo-1600880292203-757bb62b4baf?w=600&q=80" alt="Meeting"><span class="img-cap">Service Blueprint</span></div>
+        <div class="img-gallery-item img" data-anim data-delay="2"><img src="https://images.unsplash.com/photo-1553877522-43269d4ea984?w=600&q=80" alt="Strategy"><span class="img-cap">Material Study</span></div>
+        <div class="img-gallery-item img" data-anim data-delay="3"><img src="https://images.unsplash.com/photo-1552664730-d307ca884978?w=600&q=80" alt="Planning"><span class="img-cap">Interface Ritual</span></div>
+        <div class="img-gallery-item img" data-anim data-delay="4"><img src="https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=600&q=80" alt="Team"><span class="img-cap">Spatial Prototype</span></div>
+        <div class="img-gallery-item img" data-anim data-delay="5"><img src="https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=600&q=80" alt="Office"><span class="img-cap">Spec Library</span></div>
       </div>
     </div>
   </section>
 
   <!-- --- Slide 8: Closing --- -->
-  <section class="slide layout-closing dark" data-layout="closing" style="background:linear-gradient(135deg, #1a1814 0%, #2a1e13 50%, #3d2c1a 100%);">
+  <section class="slide layout-closing dark" data-layout="closing" data-chapter="3" style="background:linear-gradient(135deg, #0f1a2e 0%, #17304a 50%, #0a1a1e 100%);">
     <div class="content">
-      <blockquote class="closing-quote anim-fade-scale" data-anim data-delay="1">
-        "未来已经来临，<br>只是分布不均。"
-      </blockquote>
-      <p class="meta anim-fade-scale" data-anim data-delay="3" style="color:var(--accent);margin-top:var(--sp-6);">William Gibson</p>
-      <p class="meta anim-fade-scale" data-anim data-delay="4" style="margin-top:var(--sp-2);">Folio · v0.5</p>
+      <blockquote class="closing-quote anim-fade-scale" data-anim data-delay="1">"设计不是装饰现实，<br>而是重写现实的进入方式。"</blockquote>
+      <p class="meta anim-fade-scale" data-anim data-delay="3" style="color:var(--accent);margin-top:var(--sp-6);">Folio Field Note</p>
+      <p class="meta anim-fade-scale" data-anim data-delay="4" style="margin-top:var(--sp-2);">Design Frontiers · 2026</p>
     </div>
   </section>
 
   <!-- --- Slide 9: Timeline --- -->
-  <section class="slide layout-timeline" data-layout="timeline">
+  <section class="slide layout-timeline" data-layout="timeline" data-chapter="3">
     <div class="content layout-timeline">
       <div class="timeline-intro">
-        <div class="caption" data-anim data-delay="1" style="color:var(--accent);margin-bottom:var(--sp-3);">Timeline</div>
-        <h2 class="display-1 anim-fade-scale" data-anim data-delay="2">工作系统的<br>四次跃迁</h2>
-        <p class="lead" data-anim data-delay="3" style="margin-top:var(--sp-4);">从流程自动化到组织策展，新的协作模型不是一次升级，而是一连串认知结构的替换。</p>
+        <div class="caption accent mb-3" data-anim data-delay="1">Timeline</div>
+        <h2 class="display-1 anim-fade-scale" data-anim data-delay="2">设计史上的<br>四个转向</h2>
+        <p class="lead mt-4" data-anim data-delay="3">从物件到系统、从平面到体验，设计不断把“形态”扩展为一种影响行为与意义的框架。</p>
       </div>
       <div class="timeline-events">
         <article class="timeline-event" data-anim data-delay="2">
-          <span class="meta timeline-date">2019 · Digitize</span>
-          <h3 class="display-2 timeline-title">文档从存档变成协作界面</h3>
-          <p class="body">团队开始在同一份文档中思考、批注、决策，静态文件第一次承担了同步现场的角色。</p>
+          <span class="meta timeline-date">1919 · Bauhaus</span>
+          <h3 class="display-2 timeline-title">形式被重新连接到工业生产</h3>
+          <p class="body">设计从手工装饰转向现代系统语言，功能、材料与批量制造开始进入同一个讨论框架。</p>
         </article>
         <article class="timeline-event" data-anim data-delay="3">
-          <span class="meta timeline-date">2021 · Async</span>
-          <h3 class="display-2 timeline-title">异步工作取代会而不决</h3>
-          <p class="body">更多项目通过预读、录屏和结构化反馈推进，会议从默认选项变成高成本事件。</p>
+          <span class="meta timeline-date">1964 · Systems</span>
+          <h3 class="display-2 timeline-title">系统设计成为复杂项目的方法论</h3>
+          <p class="body">交通、信息与公共服务等大型场景催生了更强调关系、流程与约束的设计视角。</p>
         </article>
         <article class="timeline-event" data-anim data-delay="4">
-          <span class="meta timeline-date">2023 · Assist</span>
-          <h3 class="display-2 timeline-title">AI 成为第二操作系统</h3>
-          <p class="body">摘要、改写、归档、比较开始被智能代理吞掉，人类把精力留给判断与取舍。</p>
+          <span class="meta timeline-date">1995 · Interface</span>
+          <h3 class="display-2 timeline-title">网页让交互成为主流设计语法</h3>
+          <p class="body">视觉不再只是展示结果，而开始指导点击、等待、反馈与路径选择。</p>
         </article>
         <article class="timeline-event" data-anim data-delay="5">
-          <span class="meta timeline-date">2026 · Curate</span>
-          <h3 class="display-2 timeline-title">组织能力回到“选择什么”</h3>
-          <p class="body">竞争优势不再来自更快执行，而是更快构建问题、审美标准与行动框架。</p>
+          <span class="meta timeline-date">2026 · Adaptive</span>
+          <h3 class="display-2 timeline-title">设计进入实时协商与自适应时代</h3>
+          <p class="body">生成式工具与动态系统让设计更像持续调整的协议，而非一次性交付的成品。</p>
         </article>
       </div>
     </div>
   </section>
 
   <!-- --- Slide 10: Full-Bleed Spread --- -->
-  <section class="slide layout-spread dark" data-layout="spread">
+  <section class="slide layout-spread dark" data-layout="spread" data-chapter="3">
     <div class="full-bleed spread-image" data-anim>
       <img src="https://images.unsplash.com/photo-1497366754035-f200968a6e72?w=1600&q=80" alt="Editorial workspace spread">
     </div>
     <div class="spread-copy">
-      <div class="caption" data-anim data-delay="1" style="color:var(--accent);margin-bottom:var(--sp-3);">Cover Story</div>
-      <h2 class="display-hero anim-fade-scale" data-anim data-delay="2" style="color:white;max-width:8ch;">把空间设计成<br>决策引擎</h2>
-      <p class="lead" data-anim data-delay="3" style="color:rgba(255,255,255,0.74);max-width:34em;margin-top:var(--sp-4);">真正有方向感的团队，连桌面、墙面、屏幕与节奏都在传达同一件事：什么值得被放大，什么应该被剔除。</p>
+      <div class="caption accent mb-3" data-anim data-delay="1">Manifesto</div>
+      <h2 class="display-hero anim-fade-scale" data-anim data-delay="2" style="color:white;max-width:8ch;">让每一次接触<br>都成为声明</h2>
+      <p class="lead" data-anim data-delay="3" style="color:rgba(255,255,255,0.74);max-width:34em;margin-top:var(--sp-4);">设计前沿不追求额外的复杂性，而是把方向、秩序和情绪压缩进最少的元素里，让用户在短时间内感到“我知道这里为什么存在”。</p>
       <div class="spread-byline meta" data-anim data-delay="4">
         <span>By Folio Studio</span>
-        <span>Field Notes · Shanghai</span>
+        <span>Manifesto Notes · 2026</span>
       </div>
     </div>
   </section>
 
   <!-- --- Slide 11: Comparison --- -->
-  <section class="slide" data-layout="compare">
+  <section class="slide" data-layout="compare" data-chapter="3">
     <div class="content-v" style="display:grid;grid-template-rows:auto 1fr;gap:var(--sp-6);padding-top:var(--safe-y);">
       <div>
-        <div class="caption" data-anim data-delay="1" style="color:var(--accent);margin-bottom:var(--sp-3);">Comparison</div>
-        <h2 class="display-1 anim-fade-scale" data-anim data-delay="2">从旧工作台到<br>新协作界面</h2>
+        <div class="caption accent mb-3" data-anim data-delay="1">Comparison</div>
+        <h2 class="display-1 anim-fade-scale" data-anim data-delay="2">三种设计路径的<br>差异</h2>
       </div>
       <div class="layout-compare">
         <article class="compare-item" data-anim data-delay="2">
-          <div class="img r-4x3"><img src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=700&q=80" alt="Before workflow"></div>
-          <div class="caption" style="color:var(--accent);">Before</div>
-          <h3 class="display-2">工具分散</h3>
-          <p class="body">信息散落在聊天、表格与会议纪要中，决策线索缺乏连续性，团队只能依赖记忆补完上下文。</p>
+          <div class="img r-4x3"><img src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=700&q=80" alt="Styling approach"></div>
+          <div class="caption accent">Styling</div>
+          <h3 class="display-2">形式驱动</h3>
+          <p class="body">强调视觉差异与即时吸引力，适合快速建立印象，却容易在复杂场景中失去延展性。</p>
         </article>
         <article class="compare-item" data-anim data-delay="3">
-          <div class="img r-4x3"><img src="https://images.unsplash.com/photo-1517048676732-d65bc937f952?w=700&q=80" alt="Transition workflow"></div>
-          <div class="caption" style="color:var(--accent);">Transition</div>
-          <h3 class="display-2">流程编排</h3>
-          <p class="body">团队开始把节点、责任与反馈放进一个可追踪的系统里，协作首次拥有了可设计的骨架。</p>
+          <div class="img r-4x3"><img src="https://images.unsplash.com/photo-1517048676732-d65bc937f952?w=700&q=80" alt="Systems approach"></div>
+          <div class="caption accent">Systems</div>
+          <h3 class="display-2">系统驱动</h3>
+          <p class="body">通过组件、规范与流程保持一致性，让品牌或产品在不同触点下仍然说同一种语言。</p>
         </article>
         <article class="compare-item" data-anim data-delay="4">
-          <div class="img r-4x3"><img src="https://images.unsplash.com/photo-1552664730-d307ca884978?w=700&q=80" alt="After workflow"></div>
-          <div class="caption" style="color:var(--accent);">After</div>
-          <h3 class="display-2">界面即方法</h3>
-          <p class="body">每一次输入都被自动整理成下一步行动，团队不再追赶信息，而是在有设计的节奏里推进共识。</p>
+          <div class="img r-4x3"><img src="https://images.unsplash.com/photo-1552664730-d307ca884978?w=700&q=80" alt="Adaptive approach"></div>
+          <div class="caption accent">Adaptive</div>
+          <h3 class="display-2">情境驱动</h3>
+          <p class="body">设计根据数据、反馈与行为持续调整，在变化中维持清晰体验，而不是固守单一答案。</p>
         </article>
       </div>
     </div>
   </section>
 
   <!-- --- Slide 12: Numbered Listicle --- -->
-  <section class="slide dark" data-layout="list" style="background:#171310;">
+  <section class="slide dark" data-layout="list" data-chapter="3" style="background:#101822;">
     <div class="content" style="display:grid;grid-template-rows:auto 1fr;gap:var(--sp-7);align-content:center;">
       <div>
-        <div class="caption" data-anim data-delay="1" style="color:var(--accent);margin-bottom:var(--sp-3);">Listicle</div>
-        <h2 class="display-1 anim-fade-scale" data-anim data-delay="2" style="color:var(--paper);">四个原则，<br>搭起新工作流</h2>
+        <div class="caption accent mb-3" data-anim data-delay="1">Listicle</div>
+        <h2 class="display-1 anim-fade-scale" data-anim data-delay="2" style="color:var(--paper);">四条原则，<br>更新设计判断</h2>
       </div>
       <div class="layout-list">
         <article class="list-row" data-anim data-delay="2">
           <div class="list-number">01</div>
           <div class="list-copy">
-            <h3 class="display-2" style="color:var(--paper);">先定义问题，再选择工具</h3>
-            <p class="body">如果没有清晰的问题结构，再高级的工具也只会放大混乱。</p>
+            <h3 class="display-2" style="color:var(--paper);">让形式服务意图</h3>
+            <p class="body">视觉语言首先应该解释方向，而不是堆积风格选择。</p>
           </div>
         </article>
         <article class="list-row" data-anim data-delay="3">
           <div class="list-number">02</div>
           <div class="list-copy">
-            <h3 class="display-2" style="color:var(--paper);">让信息默认可见</h3>
-            <p class="body">共享语境比共享文件更重要，团队需要随时进入而不是反复被拉齐。</p>
+            <h3 class="display-2" style="color:var(--paper);">把系统写进细节</h3>
+            <p class="body">组件、命名与节奏的一致性，决定了设计能否被组织真正继承。</p>
           </div>
         </article>
         <article class="list-row" data-anim data-delay="4">
           <div class="list-number">03</div>
           <div class="list-copy">
-            <h3 class="display-2" style="color:var(--paper);">把 AI 放进重复决策里</h3>
-            <p class="body">重复性的判断越早自动化，人的注意力就越能集中在方向与例外情况。</p>
+            <h3 class="display-2" style="color:var(--paper);">用原型替代争论</h3>
+            <p class="body">当想法被做成可以体验的对象，共识通常比口头讨论来得更快。</p>
           </div>
         </article>
         <article class="list-row" data-anim data-delay="5">
           <div class="list-number">04</div>
           <div class="list-copy">
-            <h3 class="display-2" style="color:var(--paper);">审美也是一种管理工具</h3>
-            <p class="body">界面的秩序、空间的留白与语言的节奏，会持续塑造团队如何思考与协作。</p>
+            <h3 class="display-2" style="color:var(--paper);">保持对变化的可塑性</h3>
+            <p class="body">真正前沿的设计不是更快定型，而是更早预留调整与学习的空间。</p>
           </div>
         </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- --- Slide 13: Chapter Divider --- -->
+  <section class="slide layout-chapter dark" data-layout="chapter" data-chapter="4">
+    <div class="content">
+      <div class="chapter-number display-hero anim-fade-scale" data-anim data-delay="1">01</div>
+      <div class="chapter-divider anim-fade-scale" data-anim data-delay="2"></div>
+      <h2 class="chapter-title display-1 anim-fade-scale" data-anim data-delay="3">Methods</h2>
+      <p class="chapter-subtitle lead anim-fade-scale" data-anim data-delay="4">方法不是流程清单，而是帮助团队看见问题、形成判断并快速试验的设计装置。</p>
+    </div>
+  </section>
+
+  <!-- --- Slide 14: Data Table --- -->
+  <section class="slide layout-table" data-layout="table" data-chapter="4">
+    <div class="content" style="align-content:center;">
+      <div data-anim>
+        <div class="caption accent mb-3">Reference</div>
+        <h2 class="display-1">设计方法对照</h2>
+      </div>
+      <div class="table-grid" data-anim data-delay="2">
+        <div class="table-head">
+          <span class="meta">Method</span>
+          <span class="meta">Tempo</span>
+          <span class="meta">Signal</span>
+          <span class="meta">Best For</span>
+        </div>
+        <div class="table-row">
+          <div class="table-label">Field Research</div>
+          <div class="table-value" data-label="Tempo">Slow and immersive</div>
+          <div class="table-value" data-label="Signal">High-context observations</div>
+          <div class="table-value" data-label="Best For">发现真实行为与隐性需求</div>
+        </div>
+        <div class="table-row">
+          <div class="table-label">Journey Mapping</div>
+          <div class="table-value" data-label="Tempo">Collaborative sprint</div>
+          <div class="table-value" data-label="Signal">Pain points and handoffs</div>
+          <div class="table-value" data-label="Best For">对齐跨团队视角与优先级</div>
+        </div>
+        <div class="table-row">
+          <div class="table-label">Rapid Prototype</div>
+          <div class="table-value" data-label="Tempo">Fast iteration</div>
+          <div class="table-value" data-label="Signal">Usability feedback</div>
+          <div class="table-value" data-label="Best For">在低成本下验证关键假设</div>
+        </div>
+        <div class="table-row">
+          <div class="table-label">Design System Audit</div>
+          <div class="table-value" data-label="Tempo">Structured review</div>
+          <div class="table-value" data-label="Signal">Consistency gaps</div>
+          <div class="table-value" data-label="Best For">规模化前的规范修复与升级</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- --- Slide 15: Inset Image --- -->
+  <section class="slide layout-inset" data-layout="inset" data-chapter="5">
+    <div class="content">
+      <div class="inset-header" data-anim>
+        <div class="caption accent mb-3">Case Study</div>
+        <h2 class="display-1">把评审会变成<br>共享判断现场</h2>
+      </div>
+      <div class="inset-body body" data-anim data-delay="2">
+        <figure class="inset-figure">
+          <div class="img r-4x3"><img src="https://images.unsplash.com/photo-1497366216548-37526070297c?w=800&q=80" alt="Editorial design review"></div>
+          <figcaption class="caption">Design Review Room · From static updates to live critique</figcaption>
+        </figure>
+        <p>一家消费科技团队曾经把设计评审视为“结果汇报”：设计师展示几张完成度很高的视觉稿，产品和市场团队再逐项提出修改意见。问题在于，这样的评审通常发生得太晚，大家只能对结果发表意见，而不是共同塑造方向。</p>
+        <p>团队后来把评审重构为一个更早、更轻、更可协作的场景。每次会议前，设计师先分享问题陈述、路径草图与一版可点击原型；会议现场不再讨论“喜不喜欢”，而是围绕用户会如何理解、哪里会迟疑、哪些信息仍然缺失展开。</p>
+        <p>变化看似只是材料顺序的调整，实则改变了决策结构。设计因此从终局表达，转向一种帮助团队同步判断的媒介。参与者更早进入问题空间，也更容易在关键节点上达成清晰共识。</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- --- Slide 16: Pull-quote Editorial --- -->
+  <section class="slide layout-pullquote" data-layout="pullquote" data-chapter="5">
+    <div class="content">
+      <div class="pullquote-header" data-anim>
+        <div class="caption accent mb-3">Closing Essay</div>
+        <h2 class="display-1">设计的任务，是把复杂性变成可进入的秩序</h2>
+      </div>
+      <div class="pullquote-grid body">
+        <div class="pullquote-copy" data-anim data-delay="2">
+          <p>前沿设计往往不是最新技术的展示台，而是新关系的编排器。它让人知道如何开始、如何判断、何时继续、何时停下。这样的设计并不喧哗，却能在团队、产品与空间中不断累积信任。</p>
+          <p>这也是为什么越来越多组织重新定义设计角色：不再只负责最后一层表达，而是进入策略制定、服务组织与体验治理。设计师参与得越早，系统越有机会在复杂度爆炸之前获得清晰结构。</p>
+        </div>
+        <aside class="embedded-quote" data-anim data-delay="3">
+          <div class="quote-text">真正成熟的设计，不是给答案加上样式，而是让答案本身变得更容易被看见、理解与执行。</div>
+          <div class="quote-attribution meta">— Design Frontiers · 2026</div>
+        </aside>
+        <div class="pullquote-copy" data-anim data-delay="4">
+          <p>当我们谈论“设计前沿”时，本质上是在谈一种更精准的判断方式。它关心的不只是做出什么，还关心这件事如何进入现实、如何被他人接住、以及是否能在变化中继续成立。</p>
+          <p>如果说未来的竞争来自系统能力，那么设计就是这套系统最易被感知、也最容易被忽略的部分。它既塑造第一印象，也塑造长期秩序。于是每一个细节，都不再只是细节。</p>
+        </div>
       </div>
     </div>
   </section>
@@ -1216,7 +1705,8 @@ body.low-power #webgl-bg { display: none; }
 <div id="nav">
   <span class="arrow" id="nav-prev">←</span>
   <span id="nav-dots"></span>
-  <span class="page-nb" id="nav-count">1 / 12</span>
+  <span class="page-nb" id="nav-count">1 / 16</span>
+  <span class="nav-status" id="nav-autoplay" aria-live="polite"><span class="nav-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="6 3 20 12 6 21 6 3"></polygon></svg></span><span>Playing</span></span>
   <button class="nav-btn" id="nav-share" title="复制当前页链接"><span class="nav-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg></span></button>
   <span class="arrow" id="nav-next">→</span>
   <span id="nav-copied">✓ 已复制链接</span>
@@ -1230,6 +1720,13 @@ body.low-power #webgl-bg { display: none; }
   <div id="overview-grid"></div>
 </div>
 
+<div id="lightbox" aria-hidden="true">
+  <figure>
+    <img id="lightbox-image" alt="">
+    <figcaption id="lightbox-caption" class="caption"></figcaption>
+  </figure>
+</div>
+
 <!-- ==================== SHORTCUTS ==================== -->
 <div id="shortcuts">
   <button id="shortcuts-toggle">⌘ 快捷键</button>
@@ -1238,6 +1735,7 @@ body.low-power #webgl-bg { display: none; }
     <kbd>←</kbd> <kbd>↑</kbd> 上一页<br>
     <kbd>G</kbd> 缩略图概览<br>
     <kbd>F</kbd> 全屏<br>
+    <kbd>P</kbd> 自动播放<br>
     <kbd>Escape</kbd> 回到首页 / 关闭概览<br>
     <kbd>B</kbd> 低功耗模式<br>
     <kbd>?</kbd> 切换本面板
@@ -1250,31 +1748,124 @@ body.low-power #webgl-bg { display: none; }
 
   /* ==================== 状态 ==================== */
   const deck  = document.getElementById('deck');
-  const slides = document.querySelectorAll('.slide');
+  const slides = Array.from(document.querySelectorAll('.slide'));
   const dotContainer = document.getElementById('nav-dots');
   const countDisplay = document.getElementById('nav-count');
   const progress     = document.getElementById('progress');
   const overview     = document.getElementById('overview');
   const overviewGrid = document.getElementById('overview-grid');
+  const lightbox = document.getElementById('lightbox');
+  const lightboxImg = document.getElementById('lightbox-image');
+  const lightboxCaption = document.getElementById('lightbox-caption');
+  const autoPlayIndicator = document.getElementById('nav-autoplay');
   const total = slides.length;
+  const chapterLabels = {
+    1: 'Introduction',
+    2: 'Core',
+    3: 'Details',
+    4: 'Reference',
+    5: 'Closing'
+  };
+  const AUTO_PLAY_INTERVAL = 4000;
   let current = 0;
   let overviewOpen = false;
   let shortcutsOpen = false;
+  let lightboxOpen = false;
+  let autoPlayEnabled = false;
+  let autoPlayTimer = null;
+  let transitionTimer = null;
+
+  function updateAutoPlayUI() {
+    document.body.classList.toggle('auto-play', autoPlayEnabled);
+    autoPlayIndicator.setAttribute('aria-hidden', autoPlayEnabled ? 'false' : 'true');
+  }
+
+  function scheduleAutoPlay() {
+    clearTimeout(autoPlayTimer);
+    if (!autoPlayEnabled) return;
+    autoPlayTimer = window.setTimeout(() => {
+      const nextIndex = (current + 1) % total;
+      goTo(nextIndex);
+      scheduleAutoPlay();
+    }, AUTO_PLAY_INTERVAL);
+  }
+
+  function resetAutoPlay() {
+    if (autoPlayEnabled) scheduleAutoPlay();
+  }
+
+  function startAutoPlay() {
+    autoPlayEnabled = true;
+    updateAutoPlayUI();
+    scheduleAutoPlay();
+  }
+
+  function stopAutoPlay() {
+    autoPlayEnabled = false;
+    clearTimeout(autoPlayTimer);
+    autoPlayTimer = null;
+    updateAutoPlayUI();
+  }
+
+  function toggleAutoPlay() {
+    if (autoPlayEnabled) stopAutoPlay();
+    else startAutoPlay();
+  }
+
+  function updateDots() {
+    dotContainer.querySelectorAll('.dot').forEach((dot) => {
+      dot.classList.toggle('active', Number(dot.dataset.index) === current);
+    });
+  }
 
   /* ==================== 导航核心 ==================== */
-  function goTo(index, { updateHash = true } = {}) {
+  function goTo(index, { updateHash = true, manual = false } = {}) {
     if (index < 0 || index >= total) return;
-    if (index === current && index === 0) {
-      // force first render
+    if (manual) resetAutoPlay();
+
+    const previous = current;
+    const initialRender = index === current && !slides[current].classList.contains('active');
+
+    if (index === current && !initialRender) {
+      if (updateHash) {
+        history.replaceState(null, '', `#${current + 1}`);
+      }
+      updateDots();
+      highlightOverviewThumb(current);
+      return;
     }
+
     current = index;
+    clearTimeout(transitionTimer);
+
+    slides.forEach((slide, slideIndex) => {
+      if (slideIndex !== previous && slideIndex !== current) {
+        slide.classList.remove('active', 'incoming', 'exiting');
+      }
+    });
+
+    if (previous !== current) {
+      slides[previous].classList.remove('incoming');
+      slides[previous].classList.add('active', 'exiting');
+    }
+
+    slides[current].classList.remove('exiting');
+    slides[current].classList.add('active', 'incoming');
+
     deck.style.transform = `translateX(-${current * 100}%)`;
-    slides.forEach((s, i) => {
-      s.classList.toggle('active', i === current);
+    requestAnimationFrame(() => {
+      slides[current].classList.remove('incoming');
     });
-    document.querySelectorAll('.dot').forEach((d, i) => {
-      d.classList.toggle('active', i === current);
-    });
+
+    transitionTimer = window.setTimeout(() => {
+      slides.forEach((slide, slideIndex) => {
+        if (slideIndex !== current) {
+          slide.classList.remove('active', 'incoming', 'exiting');
+        }
+      });
+    }, 520);
+
+    updateDots();
     countDisplay.textContent = `${current + 1} / ${total}`;
     progress.style.width = `${((current + 1) / total) * 100}%`;
     if (updateHash) {
@@ -1284,13 +1875,33 @@ body.low-power #webgl-bg { display: none; }
   }
 
   /* ==================== 生成导航点 ==================== */
-  for (let i = 0; i < total; i++) {
+  let currentGroup = null;
+  let currentChapter = null;
+  slides.forEach((slide, index) => {
+    const chapter = slide.dataset.chapter || '0';
+    if (chapter !== currentChapter) {
+      currentChapter = chapter;
+      currentGroup = document.createElement('span');
+      currentGroup.className = 'chapter-group';
+      const label = document.createElement('span');
+      label.className = 'chapter-label';
+      label.textContent = chapterLabels[chapter] || `Chapter ${chapter}`;
+      const dots = document.createElement('span');
+      dots.className = 'chapter-dots';
+      currentGroup.appendChild(label);
+      currentGroup.appendChild(dots);
+      dotContainer.appendChild(currentGroup);
+    }
+
     const dot = document.createElement('span');
-    dot.className = `dot${i === 0 ? ' active' : ''}`;
-    dot.dataset.index = i;
-    dot.addEventListener('click', () => { goTo(i); closeOverview(); });
-    dotContainer.appendChild(dot);
-  }
+    dot.className = `dot${index === 0 ? ' active' : ''}`;
+    dot.dataset.index = index;
+    dot.addEventListener('click', () => {
+      goTo(index, { manual: true });
+      closeOverview();
+    });
+    currentGroup.querySelector('.chapter-dots').appendChild(dot);
+  });
 
   /* ==================== URL Hash ==================== */
   function handleHash() {
@@ -1335,7 +1946,7 @@ body.low-power #webgl-bg { display: none; }
       });
       thumb.appendChild(clone);
       thumb.addEventListener('click', () => {
-        goTo(i);
+        goTo(i, { manual: true });
         closeOverview();
       });
       overviewGrid.appendChild(thumb);
@@ -1377,8 +1988,39 @@ body.low-power #webgl-bg { display: none; }
     });
   }
 
+  function openLightbox(img) {
+    const caption = img.closest('.img-gallery-item')?.querySelector('.img-cap')?.textContent?.trim() || img.alt || '';
+    lightboxImg.src = img.currentSrc || img.src;
+    lightboxImg.alt = img.alt || caption || 'Expanded image';
+    lightboxCaption.textContent = caption;
+    lightbox.classList.add('open');
+    lightbox.setAttribute('aria-hidden', 'false');
+    lightboxOpen = true;
+    resetAutoPlay();
+  }
+
+  function closeLightbox() {
+    lightbox.classList.remove('open');
+    lightbox.setAttribute('aria-hidden', 'true');
+    lightboxOpen = false;
+    window.setTimeout(() => {
+      if (!lightboxOpen) {
+        lightboxImg.removeAttribute('src');
+        lightboxCaption.textContent = '';
+      }
+    }, 320);
+  }
+
   /* ==================== 键盘导航 ==================== */
   document.addEventListener('keydown', (e) => {
+    if (lightboxOpen) {
+      if (e.key === 'Escape') {
+        e.preventDefault();
+        closeLightbox();
+      }
+      return;
+    }
+
     // 概览模式下只响应 Escape
     if (overviewOpen) {
       if (e.key === 'Escape' || e.key === 'g' || e.key === 'G') {
@@ -1389,17 +2031,19 @@ body.low-power #webgl-bg { display: none; }
 
     switch (e.key) {
       case 'ArrowRight': case 'ArrowDown': case ' ':
-        e.preventDefault(); goTo(current + 1); break;
+        e.preventDefault(); goTo(current + 1, { manual: true }); break;
       case 'ArrowLeft': case 'ArrowUp':
-        e.preventDefault(); goTo(current - 1); break;
+        e.preventDefault(); goTo(current - 1, { manual: true }); break;
       case 'Escape':
-        e.preventDefault(); goTo(0); break;
+        e.preventDefault(); goTo(0, { manual: true }); break;
       case 'f': case 'F':
         e.preventDefault(); toggleFullscreen(); break;
       case 'g': case 'G':
         e.preventDefault(); toggleOverview(); break;
+      case 'p': case 'P':
+        e.preventDefault(); toggleAutoPlay(); break;
       case 'b': case 'B':
-        document.body.classList.toggle('low-power'); break;
+        e.preventDefault(); document.body.classList.toggle('low-power'); break;
       case '?':
         e.preventDefault();
         shortcutsOpen = !shortcutsOpen;
@@ -1417,8 +2061,8 @@ body.low-power #webgl-bg { display: none; }
     setTimeout(() => {
       wheelTimeout = false;
     }, 600);
-    if (e.deltaY > 0) goTo(current + 1);
-    else goTo(current - 1);
+    if (e.deltaY > 0) goTo(current + 1, { manual: true });
+    else goTo(current - 1, { manual: true });
   }, { passive: true });
 
   /* ==================== 触屏 ==================== */
@@ -1433,14 +2077,14 @@ body.low-power #webgl-bg { display: none; }
     const dx = e.changedTouches[0].clientX - touchStartX;
     const dy = e.changedTouches[0].clientY - touchStartY;
     if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy)) {
-      if (dx < 0) goTo(current + 1);
-      else goTo(current - 1);
+      if (dx < 0) goTo(current + 1, { manual: true });
+      else goTo(current - 1, { manual: true });
     }
   }, { passive: true });
 
   /* ==================== 按钮绑定 ==================== */
-  document.getElementById('nav-prev').addEventListener('click', () => goTo(current - 1));
-  document.getElementById('nav-next').addEventListener('click', () => goTo(current + 1));
+  document.getElementById('nav-prev').addEventListener('click', () => goTo(current - 1, { manual: true }));
+  document.getElementById('nav-next').addEventListener('click', () => goTo(current + 1, { manual: true }));
   document.getElementById('nav-share').addEventListener('click', copySlideLink);
 
   document.getElementById('shortcuts-toggle').addEventListener('click', () => {
@@ -1453,6 +2097,24 @@ body.low-power #webgl-bg { display: none; }
     if (e.target === overview) closeOverview();
   });
 
+  lightbox.addEventListener('click', (e) => {
+    if (e.target === lightbox) closeLightbox();
+  });
+
+  slides.forEach((slide) => {
+    slide.querySelectorAll('.img-gallery-item img').forEach((img) => {
+      img.addEventListener('click', () => openLightbox(img));
+    });
+  });
+
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) {
+      clearTimeout(autoPlayTimer);
+    } else if (autoPlayEnabled) {
+      scheduleAutoPlay();
+    }
+  });
+
   /* ==================== 初始化 ==================== */
   // 处理 URL hash
   handleHash();
@@ -1462,6 +2124,7 @@ body.low-power #webgl-bg { display: none; }
   }
   // 进度条初始
   progress.style.width = `${(1 / total) * 100}%`;
+  updateAutoPlayUI();
   requestAnimationFrame(() => document.body.classList.add('loaded'));
 
 })();
