@@ -123,6 +123,24 @@ node scripts/export-indesign.mjs path/to/index.html
 - Small file size (~1.2MB)
 - Can be placed into InDesign as a reference layer
 
+### Wireframing
+
+Before jumping into production, sketch out your slide structure with the **wireframe sheet** — a print-friendly A4 landscape template (16:9 ratio cards) for hand-drawing layout ideas.
+
+Open `templates/wireframe-sheet.html` in your browser, then print or use it as a digital reference:
+
+```
+templates/wireframe-sheet.html
+```
+
+Each card represents a slide with:
+- Title / subtitle area
+- Content zone (text, image, or mixed)
+- Page number
+- Notes section
+
+Use it to plan your deck structure before handing off to Folio for production.
+
 ---
 
 ## 10 Visual Styles
@@ -404,6 +422,24 @@ node scripts/export-indesign.mjs 项目路径/index.html
 - 图片为原生 PDF 元素（非 PNG 覆盖）
 - 文件小（约 1.2MB）
 - 可拖入 InDesign 作为参考层
+
+### 线框图速写
+
+在进入正式制作之前，先用 **线框图模板** 规划每页 slide 的结构。这是一个 A4 横版可打印页面，包含 16:9 比例的卡片，适合手绘草图或数字标注。
+
+在浏览器打开即可使用：
+
+```
+templates/wireframe-sheet.html
+```
+
+每张卡片包含：
+- 标题 / 副标题区域
+- 内容区（文字、图片、或混合）
+- 页码
+- 备注栏
+
+先画线框图确定结构，再交给 Folio 制作成品。
 
 ---
 
