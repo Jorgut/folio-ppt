@@ -1,326 +1,152 @@
-# Folio · 版式引擎
+# Folio · Design Intelligence Engine
 
-> 由 Jorgut 创建 · MIT 协议开源
+> Magazine-style presentation engine. Structured content → template-driven layout → multi-format export.
 
-**Layout Engine。** 你给内容 + 风格，Folio 给 deck。不做设计咨询，只做高质量渲染。
-
+```text
+你说要做个什么 → Folio 确定风格和结构 → 渲染并导出 → 你拿到成品
 ```
-内容 + 风格 → 拷贝模板 → 填充 → 导出 (HTML / PPTX / PDF / IDML / Figma)
-```
+
+一次输出：HTML 演示 / PPTX / PDF / Figma。不需要手动排版。
 
 ---
 
-## 快速开始（4 步）
+## 快速开始
 
-```bash
-# 1. 拷贝模板到项目
-cp index.html 我的项目/index.html
-mkdir -p 我的项目/images
+打开 Claude（或任何接入此 Skill 的 AI），说：
 
-# 2. 在 <body> 上选主题
-# <body class="theme-indigo">  — 科技感
-# <body class="theme-sand">    — 暖色调
-# <body class="theme-mono">    — 极简单色
-# 完整 8 套主题在 SKILL.md / 风格参数在 design/style-guide.md
+> **"用 Folio 做一个关于 [你的主题] 的演示，导出 HTML。"**
 
-# 3. 浏览器预览
-open 我的项目/index.html
+AI 会依次确认：
+1. **内容** — 几张 slide？每页写什么？有图吗？
+2. **风格** — 从 10 套风格中选一个（或你描述感觉，AI 推荐）
+3. **导出格式** — HTML / PPTX / PDF / Figma
 
-# 4. 导出（安装依赖后）
-cd scripts && npm install && npx playwright install chromium
-
-# PPTX / PDF / InDesign
-node export-native-pptx.mjs 我的项目/index.html      # PPTX
-node export-print-pdf.mjs 我的项目/index.html         # 印刷 PDF
-node export-idml.mjs 我的项目/index.html               # InDesign 原生格式
-
-# Figma（自动选择）
-node export-figma.mjs 我的项目/index.html              # 有 C2D → C2D; 否则本地
-node export-figma.mjs --mode c2d 我的项目/index.html    # 强制 Code.to.Design API
-node export-figma.mjs --mode local 我的项目/index.html   # 强制本地 Figma 插件
-
-# 验证
-node export-verify.mjs 我的项目/index.html
-```
+然后你拿到成品。
 
 ---
 
-## 导出格式总览
+## 什么时候用 Folio
 
-| 格式 | 命令 | 文字可编辑 | 用途 |
-|------|------|-----------|------|
-| **HTML** | 浏览器打开 | ✅ 原生 | 预览、交互式演示 |
-| **PPTX** | `export-native-pptx.mjs` | ✅ 可编辑 | PowerPoint / Google Slides / Keynote |
-| **PDF 印刷** | `export-print-pdf.mjs` | ❌ 图片化 | 印刷厂、带裁切标记 |
-| **PDF 编辑** | `export-indesign.mjs` | ✅ 可选文字 | InDesign 置入、轻量预览 |
-| **Figma** | `export-figma.mjs`（C2D / 本地插件） | ✅ 可编辑 | Figma 内直接修改排版 |
-| **IDML** | `export-idml.mjs` | ✅ 可编辑 | InDesign 原生导入 |
-
----
-
-## Figma 导出（双模式）
-
-Folio 提供两种 Figma 导出方式：**Code.to.Design**（云 API，高 fidelity）和 **本地模式**（内置 Figma 插件，免费）。
-
-| | Code.to.Design ☁️ | 本地模式 🖥️ |
-|--|-------------------|-------------|
-| Fidelity | 高（服务端解析 HTML/CSS） | 一般（精确坐标 + 文字节点） |
-| API Key | ✅ 需要（用户自备，免费 10 credits） | ❌ 不需要 |
-| 成本 | 1 credit / 次（约 $0.08/次） | 免费 |
-| 操作 | 自动写入剪贴板 → Figma 粘贴 | 生成 JSON → Figma 插件导入 |
-| 文字 | 完全可编辑 | 可编辑（可能需要双击渲染） |
-
-### 模式选择
-
-```bash
-# 自动选择（默认）：有 API Key 用 C2D，否则本地
-node scripts/export-figma.mjs path/to/index.html
-
-# 强制指定模式
-node scripts/export-figma.mjs --mode c2d path/to/index.html
-node scripts/export-figma.mjs --mode local path/to/index.html
-```
-
-### 首次运行（无 API Key）
-
-自动进入引导界面：
-
-```
-╔══════════════════════════════════════════════════════╗
-║  🔑  Code.to.Design 需要 API Key                     ║
-╚══════════════════════════════════════════════════════╝
-
-Folio 支持两种 Figma 导出方式：
-
-  [1] Code.to.Design（推荐）
-      — 高 fidelity，文字完全可编辑
-      — 需要 API Key（免费：10 credits）
-      → 打开 https://api.to.design 注册获取
-
-  [2] 本地模式（免费，内置 Figma 插件）
-      — 不需要 API Key，不需要联网
-      — fidelity 一般，文字可能需要手动调整
-```
-
-选择 1 → 自动打开浏览器跳转 `https://api.to.design` → 注册获取 API Key → 设置环境变量：
-
-```bash
-export C2D_API_KEY="你的key"
-# 或写入 .env 文件
-echo 'C2D_API_KEY="你的key"' >> scripts/.env
-```
-
-选择 2 → 直接用本地模式。
-
-### 模式 A：Code.to.Design（推荐）
-
-1. 配置 API Key：
-
-```bash
-export C2D_API_KEY="你的key"
-```
-
-2. 运行导出：
-
-```bash
-node scripts/export-figma.mjs path/to/index.html
-```
-
-3. 流程：
-   - Playwright 渲染每页
-   - 发送 HTML 到 Code.to.Design API（1 次调用 = 1 credit）
-   - 收到 Figma 原生剪贴板数据
-   - 自动写入 macOS 系统剪贴板（`NSPasteboardTypeHTML`）
-   - 切换到 Figma → `Cmd+V` → 16 页全部以 Frame 出现
-
-4. 输出文件：
-   - `index.figma-clipboard.html` — 原始剪贴板数据（备份）
-
-### 模式 B：本地模式（免费）
-
-使用内置的 **Folio Importer** 插件，完全本地运行。**同时支持 Figma Design 和 Figma Slides。**
-
-1. 运行导出：
-
-```bash
-node scripts/export-figma.mjs --mode local path/to/index.html
-```
-
-2. 首次安装插件（只需一次）：
-   - 左上角菜单 → **Plugins** → **Development** → **Import plugin from manifest…**
-   - 选择输出的 `figma-plugin/manifest.json`
-
-3. 在 **Figma Design** 中导入：
-   - 运行 **Folio Importer** → 选择 `index.figma.json`
-   - 自动为每页创建 Page + Frame + TextNode + Image Rectangle
-
-4. 在 **Figma Slides** 中导入：
-   - 打开或新建一个 Figma Slides 文件
-   - 运行 **Folio Importer** → 选择同一个 `index.figma.json`
-   - 自动为每页创建一个 Slide（1920×1080），坐标从 1280×720 等比缩放
-
-### 已知限制
-
-| 模式 | 限制 |
-|------|------|
-| C2D | 依赖网络；API 消耗 credits；不支持 system fonts（只能用 Google Fonts） |
-| 本地 | 文字双击才渲染；CSS 排版不完全还原；文字框可能重叠 |
+| 场景 | 适合 | 不适合 |
+|------|------|--------|
+| 作品集 / 项目汇报 | ✅ 杂志级排版，自带设计感 | |
+| 产品发布会 / Pitch Deck | ✅ 快速出稿，无需设计团队 | |
+| 学术汇报 / 论文展示 | ✅ 干净、专业、可输出 PDF | |
+| Figma 设计稿转演示 | ✅ C2D 高保真还原 | |
+| 需要反复修改内容 | ✅ 改内容不改排版 | |
+| 高度定制动画 / 交互 | | ❌ 交互有限，非前端项目 |
+| 超长文档（50+ 页） | | ❌ 专为 6-20 页设计 |
 
 ---
 
-## InDesign 工作流
+## 工作流
 
-Folio 提供两种 InDesign 友好格式：
-
-### IDML（首选，原生导入）
-
-```bash
-node scripts/export-idml.mjs path/to/index.html
+```text
+你描述需求
+    ↓
+Folio 确定：平台 → 受众 → 风格 → 交互层级
+    ↓
+套用模板 → 填充内容 → 渲染
+    ↓
+┌─────────┬─────────┬─────────┬─────────┐
+│ HTML    │ PPTX    │ PDF     │ Figma   │
+│ 可直接  │ 文字可   │ 出版级   │ C2D 高  │
+│ 演示    │ 编辑     │ 3mm出血 │ 保真导入 │
+└─────────┴─────────┴─────────┴─────────┘
 ```
 
-输出：
-- `index.idml` — InDesign 原生格式，直接双击或 **文件 → 打开**
-- `index_images/` — 图片文件夹（IDML 引用外部图片，不嵌入）
-
-IDML 特点：
-- 文字进独立文本框，完全可编辑
-- 字体/字号/颜色/对齐保留
-- 16 页自动建好，页码正确排序
-- 支持 InDesign 的段落样式和字符样式
-
-### InDesign PDF（备选，置入式）
-
-```bash
-node scripts/export-indesign.mjs path/to/index.html
-```
-
-输出 `index.indesign.pdf`（约 1.2MB），特点：
-- 文字可选（非图片化）
-- 图片为原生 PDF 元素（非 PNG 覆盖）
-- 可拖入 InDesign 作为参考层
+每个环节由 AI 引导，无需手动配置。
 
 ---
 
-## 文件结构
+## 输出格式
 
-```
-folio/
-├── SKILL.md                      ← 入口：4 步工作流 + 决策表
-├── README.md                     ← 本文件
-├── index.html                    ← 主模板（16 种布局 + 交互系统）
-├── design/
-│   ├── style-guide.md            ← 10 种风格完整参数
-│   ├── principles.md             ← 设计原则速查 + 交互层级
-│   └── knowledge-base/           ← 教学：Gestalt / UX Laws / Accessibility / 信息设计
-├── engines/
-│   ├── layout-engine.md          ← 16 种布局选择与组合规则
-│   ├── typography-engine.md      ← 字体系统与配对矩阵
-│   ├── color-engine.md           ← 配色系统与 8 主题色板
-│   ├── interaction-engine.md     ← L0-L4 交互层级
-│   ├── animation-engine.md       ← 动效方案与缓动速查
-│   ├── visual-effects-engine.md  ← 视觉特效（Glass/Aurora/Noise...）
-│   └── export-engine.md          ← 输出格式选择
-├── scripts/
-│   ├── generate-theme.mjs        ← 主题代码生成器
-│   ├── design-decision.mjs       ← 交互式风格选择 CLI
-│   ├── export-native-pptx.mjs    ← PPTX 导出
-│   ├── export-print-pdf.mjs      ← 印刷级 PDF
-│   ├── export-pdf.mjs            ← 基础 PDF
-│   ├── export-indesign.mjs       ← InDesign 编辑 PDF
-│   ├── export-idml.mjs           ← InDesign 原生 IDML
-│   ├── export-figma.mjs          ← Figma 导出（双模式）
-│   ├── figma-plugin/             ← Figma 导入插件
-│   │   ├── manifest.json
-│   │   ├── code.js
-│   │   └── ui.html
-│   ├── .env.example              ← 环境变量模板
-│   ├── export-verify.mjs         ← 输出验证
-│   └── layout-mapping.mjs        ← 布局映射引擎（PPTX/IDML）
-├── references/                   ← 设计参考文件
-└── templates/                    ← 线框图模板
-```
-
----
-
-## 核心特性
-
-| 特性 | 状态 |
-|------|------|
-| 杂志级排版（16 种布局，不对称优先） | ✅ 稳定 |
-| 8pt Grid + 12 Column 设计系统 | ✅ 稳定 |
-| 交互式演示（快捷键、概览、全屏、低功耗） | ✅ 稳定 |
-| 10 种视觉风格（Minimal/Editorial/Swiss/Glass...） | ✅ v0.9 |
-| Native PPTX 导出（全文字可编辑） | ✅ 稳定 |
-| 出版级 PDF（3mm 出血 + 裁切标记） | ✅ 稳定 |
-| Figma 导出 — Code.to.Design（高 fidelity，剪贴板粘贴） | ✅ v2.0 |
-| Figma 导出 — 本地模式（内置插件，免费离线） | ✅ v1.0 |
-| IDML 导出（InDesign 原生导入，文字/样式完整） | ✅ v1.0 |
-| InDesign 编辑 PDF（原生图片 + 可选文字） | ✅ v1.0 |
-| 响应式/自适应设计（mobile/tablet/desktop） | ✅ 稳定 |
-| 主题色切换（8 套预设） | ✅ 稳定 |
-
----
-
-## 已知限制
-
-| 格式 | 限制 | 原因 |
-|------|------|------|
-| **PPTX** | CSS 出血/重叠/文字压图不完全还原 | PPTX 格式不支持杂志级绝对定位 |
-| **Figma C2D** | 仅支持 Google Fonts（不支持 system fonts） | Code.to.Design 解析限制 |
-| **Figma C2D** | 需联网 + 消耗 credits | 依赖第三方 API |
-| **Figma 本地** | 文字双击才渲染 | Figma Plugin API 文本节点渲染机制 |
-| **Figma 本地** | CSS 排版不完全还原，文字框可能重叠 | 浏览器 vs Figma 文本布局引擎差异 |
-| **IDML** | 图片为外部链接，需保持 `index_images/` 同目录 | IDML 格式不嵌入二进制图片 |
-| **PDF 印刷** | 文件较大（7MB+） | 全页 PNG 覆盖层 |
+| 格式 | 一句话 | 适合谁 |
+|------|--------|--------|
+| **HTML** | 浏览器打开就能演示，有快捷键和过渡动效 | 快速分享、线上展示 |
+| **PPTX** | 文字完全可编辑，在 PowerPoint / Keynote / Google Slides 里随便改 | 客户交付、团队协作 |
+| **PDF 印刷** | 3mm 出血 + 裁切标记，直接发印刷厂 | 画册、手册、印刷品 |
+| **Figma** | 像素级还原到 Figma Frame，继续精修 | 设计团队接力 |
 
 ---
 
 ## 10 种视觉风格
 
-| 风格 | 语感 | 参考 | 主题 |
-|------|------|------|------|
-| **Minimal** | 少即是多 | Apple | `default` / `mono` |
-| **Editorial** | 印刷杂志搬上屏幕 | NYT Magazine | `default` / `sand` |
-| **Swiss** | 网格与秩序 | 瑞士国际主义 | `mono` |
-| **Architectural** | 空间与结构 | Tadao Ando | `forest` |
-| **Brutalism** | 粗犀牛排版 | 反设计运动 | `sand` |
-| **Glass** | 未来感透明层次 | Apple Vision Pro | `indigo` / `ocean` |
-| **Dark** | 暗底发光 | GitHub Dark | `indigo` |
-| **Bento** | 井然有序的网格 | Dashboard | `mono` |
-| **Luxury** | 昂贵感 | 高端品牌 | `rose` |
-| **Cyberpunk** | 霓虹夜色 | 赛博朋克 | `neon` |
-
-完整参数（字体/颜色/间距/动效/特效/布局/禁忌）→ `design/style-guide.md`
+| 风格 | 一句话 | 适合 |
+|------|--------|------|
+| **Minimal** | 少即是多，Apple 式克制 | 产品介绍、个人网站 |
+| **Editorial** | 杂志封面级排版 | 内容品牌、叙事型演示 |
+| **Swiss** | 网格与秩序，瑞士国际主义 | 数据展示、企业报告 |
+| **Architectural** | 空间感、大面积留白 | 建筑作品集、空间设计 |
+| **Brutalism** | 粗犷、有冲击力 | 创意作品、实验性项目 |
+| **Glass** | 毛玻璃层次、未来感 | 科技产品、Vision Pro 风格 |
+| **Dark** | 暗底发光，强调视觉深度 | 游戏、夜间场景、数据大屏 |
+| **Bento** | 井然有序的模块网格 | Dashboard、功能面板 |
+| **Luxury** | 精致、昂贵感 | 高端品牌、邀请函 |
+| **Cyberpunk** | 霓虹、赛博朋克 | 音乐节、创意活动 |
 
 ---
 
-## 交互式演示
+## 我知道你可能会问
 
-| 快捷键 | 功能 |
-|--------|------|
-| `→` `↓` `Space` | 下一页 |
-| `←` `↑` | 上一页 |
-| `G` | 缩略图概览 |
-| `F` | 全屏切换 |
-| `Escape` | 回到首页 / 关闭概览 |
-| `B` | 低功耗模式 |
-| `?` | 快捷键面板 |
+### 我不会写代码，能用吗？
+
+可以。你只需要跟 AI 说你要做什么。模板、渲染、导出都是自动的。
+
+### 内容后期还能改吗？
+
+| 格式 | 能不能改 |
+|------|---------|
+| HTML | 可以直接改文字和图片 |
+| PPTX | PowerPoint / Keynote 里任意编辑文字 |
+| PDF 印刷 | 印刷品，改不了（但可以重新导出） |
+| Figma | Frame 里所有文字和图片都可编辑 |
+
+### 不支持什么？
+
+- 不支持 50+ 页的文档（排版引擎为 6-20 页优化）
+- 不支持复杂自定义动画（不是前端框架）
+- 不支持实时协作编辑（单次生成）
+
+### 和直接做 PPT 有什么区别？
+
+PPT 是"拖拽排版"，Folio 是"告诉 AI 你想要什么，它排好给你"。改内容不改排版，批量输出多格式。
 
 ---
 
-## 依赖
+## 给开发者 / 高级使用者
 
-- [PptxGenJS](https://github.com/gitbrent/PptxGenJS) — PPTX 生成
-- [Playwright](https://playwright.dev) — 浏览器渲染 + 截图 + PDF
+### 直接运行
 
 ```bash
-cd scripts
-npm install
-npx playwright install chromium
+cd scripts && npm install
+
+# 预览
+open 项目路径/index.html
+
+# 导出
+node export-figma.mjs 项目路径/index.html
+node export-native-pptx.mjs 项目路径/index.html
 ```
+
+所有导出脚本：`scripts/export-*.mjs`
+
+### 项目结构
+
+```
+folio/
+├── index.html          ← 主模板（16 种布局）
+├── SKILL.md            ← AI 指引
+├── design/             ← 设计系统文档
+├── engines/            ← 决策引擎规则
+├── scripts/            ← 导出脚本 + Figma 插件
+└── references/         ← 设计参考
+```
+
+详细文件结构见 `SKILL.md`。
 
 ---
 
-## 许可证
+## License
 
-MIT License · Copyright (c) 2026 Jorgut
+MIT · Copyright (c) 2026 Jorgut
